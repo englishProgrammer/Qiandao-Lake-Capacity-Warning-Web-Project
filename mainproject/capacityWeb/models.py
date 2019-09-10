@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 class Camera(models.Model):
@@ -51,6 +52,8 @@ class Scenic(models.Model):
     warning1nums = models.IntegerField(db_column='warning1Nums', blank=True, null=True)  # Field name made lowercase.
     warning2nums = models.IntegerField(db_column='warning2Nums', blank=True, null=True)  # Field name made lowercase.
     warning3nums = models.IntegerField(db_column='warning3Nums', blank=True, null=True)  # Field name made lowercase.
+    lgn = models.FloatField(blank=True, null=True)
+    lat = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
