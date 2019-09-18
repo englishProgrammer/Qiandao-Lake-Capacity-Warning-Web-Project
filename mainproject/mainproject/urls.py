@@ -22,5 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # capacityWEB's URL
     url(r'^index/', capViews.index),
+    url(r'^indexV0/', capViews.indexV0),
     url(r'^test/', capViews.test),
+    url(r'^getHeatMapPoints/', capViews.getHeatMapPoints),
 ]
