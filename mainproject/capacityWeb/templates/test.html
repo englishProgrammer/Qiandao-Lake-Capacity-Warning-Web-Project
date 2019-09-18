@@ -4,23 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script type="text/javascript"
-            src="http://api.map.baidu.com/api?v=3.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+    {#    <script type="text/javascript"#}
+    {#            src="http://api.map.baidu.com/api?v=3.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>#}
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
-<div id="heatmap"></div>
-<div id="population_chart"></div>
+<div id="population_chart" data-sort="true" data-width="200" class="jChart chart-sm"></div>
+{#<div id="bar_of_pies" data-sort="true" data-width="200" class="jChart chart-sm" name="My Favorite Pies">#}
+{#	<div class="define-chart-row" data-color="red" title="Pumpkin">100</div>#}
+{#	<div class="define-chart-row" data-color="gray" title="Pecan">24</div>#}
+{#	<div class="define-chart-row" data-color="green" title="Cherry">17</div>#}
+{#	<div class="define-chart-row" data-color="orange" title="Apple">26</div>#}
+{#	<div class="define-chart-row" data-color="black" title="Rhubarb">12</div>#}
+{#	<div class="define-chart-row" data-color="blue" title="Chocolate Cream">8</div>#}
+{##}
+{#	<div class="define-chart-footer">10</div>#}
+{#	<div class="define-chart-footer">20</div>#}
+{#	<div class="define-chart-footer">30</div>#}
+{#</div>#}
 <script>
-    var map = new BMap.Map("heatmap");
-    var point = new BMap.Point(116.404, 39.915);
-    map.centerAndZoom(point, 15);
-    $("#population_chart").jChart({
-        name: "North American Regional Population Loss 2014",
-        headers: ["Arizona", "Michigan", "Ontario", "British Columbia", "Texas"],
-        values: [250000, 478000, 88000, 429000, 423000],
-        footers: [100000, 200000, 300000, 400000, 500000],
-        colors: ["#1000ff", "#006eff", "#00b6ff", "#00fff6", "#00ff90"]
+    $(document).ready(function () {
+        $("#population_chart").jChart({
+            name: "North American Regional Population Loss 2014",
+            headers: ["Arizona", "Michigan", "Ontario", "British Columbia", "Texas"],
+            values: [10, 14, 25, 10, 13],
+            footers: [5, 10, 15, 20, 25],
+            colors: ["#1000ff", "#006eff", "#00b6ff", "#00fff6", "#00ff90"],
+        })
+        ;
     });
+</script>
+{#<script>#}
+{#    $(document).ready(function () {#}
+{#        $('#population_chart').jChart({#}
+{#            xLabel: 'population',#}
+{#        })#}
+{#    })#}
+{#</script>#}
+<script>
+    $('#bar_of_pies').jChart();
 </script>
 </body>
 </html>
