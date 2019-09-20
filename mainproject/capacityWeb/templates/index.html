@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel='stylesheet' href="{% static 'css/menu.css' %}">
+    <link rel='stylesheet' href="{% static 'css/Bmap.selfdef.css' %}">
     <!-- JavaScript-->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -107,7 +108,10 @@
     <div class="container-block" id="heatmap">
         <div class="container-header">
             <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
-            <div class="container-tag">当前情况</div>
+            <select class="container-tag" onchange="heatmap_onchange()" id="heatmap_selected">
+                <option class="container-tag" value="1">模式一 : 游客人数</option>
+                <option class="container-tag" value="2" selected>模式二 : 景区承载力</option>
+            </select>
         </div>
         <div class="container-content" id="container-heatmap">
 
@@ -212,66 +216,165 @@
         <div class="container-content" id="container-warning">
             {% for item in curwarn %}
                 {% if item.type == 1 and item.level == 1 %}
-                <div class="content-curwarn" style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
+                    <div class="content-curwarn"
+                         style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                    </div>
                 {% elif item.type == 1 and item.level == 2 %}
-                <div class="content-curwarn" style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
+                    <div class="content-curwarn"
+                         style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                    </div>
                 {% elif item.type == 1 and item.level == 3 %}
-                <div class="content-curwarn" style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
+                    <div class="content-curwarn"
+                         style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                    </div>
                 {% endif %}
             {% endfor %}
         </div>
     </div>
 </div>
+<script src="{% static 'js/baidu-map-flashMarker.js' %}"></script>
 <script type="text/javascript">
     // 百度地图API功能
     var map = new BMap.Map("container-heatmap");    // 创建Map实例
     map.centerAndZoom(new BMap.Point(119.018693, 29.600992), 12);  // 初始化地图,设置中心点坐标和地图级别
-    //添加地图类型控件
-    map.addControl(new BMap.MapTypeControl({
-        mapTypes: [
-            BMAP_NORMAL_MAP,
-            BMAP_HYBRID_MAP
-        ]
-    }));
+
     map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
-    function addMarker(point) {
-        var marker = new BMap.Marker(point);
-        map.addOverlay(marker);
+
+    function addOverHandler(name, content, marker, bounce = 1) {
+        var info_window = {
+            width: 200,     // 信息窗口宽度
+            height: 60,     // 信息窗口高度
+            title: name, // 信息窗口标题
+            enableMessage: true//设置允许信息窗发送短息
+        };
+        if (bounce) {
+            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
+        }
+        marker.addEventListener("mouseover", function (e) {
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content, info_window);  // 创建信息窗口对象
+                map.openInfoWindow(infoWindow, point); //开启信息窗口
+            }
+        );
+        marker.addEventListener("mouseout", function (e) {
+                map.closeInfoWindow(); //关闭信息窗口
+
+            }
+        );
     }
 
-    // 坐标点
-    $.ajax({
-        url: '/getHeatMapPoints/',
-        type: 'POST',
-        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-        async: true,
-        success: function (arg) {
-            // 若调用成功，向地图添加标记
-            var obj = jQuery.parseJSON(arg)[0];
-            scenic_points_obj = obj['scenic_data'];
-            for (var i = 0; i < scenic_points_obj.length; i++) {
-                var point = new BMap.Point(scenic_points_obj[i].fields.lgn, scenic_points_obj[i].fields.lat
-                    )
-                ;
-                addMarker(point);
+    function heatmap_nums() {
+        map.clearOverlays();
+        // 坐标点
+        $.ajax({
+            url: '/getHeatMapNums/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+
+                // 若调用成功，向地图添加标记
+                var obj = jQuery.parseJSON(arg)[0];
+                // 各摄像头的统计对象
+                cam_points_obj = obj['rn_data'];
+                // 景区标注对象
+                scenic_points_obj = obj['scenic_data'];
+                var points = [];
+                var scenicnums = [];
+                // 初始化景区人数之和
+                for (i = 0; i < scenic_points_obj.length; i++) {
+                    scenicnums[i] = 0;
+                }
+                // 统计各摄像头信息
+                for (i = 0; i < cam_points_obj.length; i++) {
+                    points.push({
+                        'lng': cam_points_obj[i].camLng,
+                        'lat': cam_points_obj[i].camLat,
+                        'count': cam_points_obj[i].all_nums
+                    });
+                    scenicnums[cam_points_obj[i].scenicId - 1] += cam_points_obj[i].all_nums;
+                }
+                // 添加标注物
+                for (var i = 0; i < scenic_points_obj.length; i++) {
+                    var point = new BMap.Point(scenic_points_obj[i].fields.lng, scenic_points_obj[i].fields.lat); // 坐标点
+                    var marker = new BMap.Marker(point); // 标注物
+                    map.addOverlay(marker);
+                    addOverHandler(scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
+                }
+                heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+                map.addOverlay(heatmapOverlay);
+                heatmapOverlay.setDataSet({data: points, max: 1000});
+                heatmapOverlay.show();
             }
-            cam_points_obj = obj['rn_data'];
-            var points = [];
-            for (i = 0; i < cam_points_obj.length; i++) {
-                points.push({
-                    'lng': cam_points_obj[i].camLgn,
-                    'lat': cam_points_obj[i].camLat,
-                    'count': cam_points_obj[i].all_nums
-                })
+        });
+    }
+
+    function heatmap_scenic() {
+        map.clearOverlays();
+        // 坐标点
+        $.ajax({
+            url: '/getHeatMapScenic/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var obj = jQuery.parseJSON(arg)[0];
+                rn_obj = obj['rn_data'];
+                window.console.log(rn_obj);
+                var citys = [];
+                for (var i = 0; i < rn_obj.length; i++) {
+                    city = {};
+                    city['name'] = rn_obj[i].scenicName; // 景区名
+                    city['lnglat'] = [rn_obj[i].lng, rn_obj[i].lat]; // 坐标点
+                    city['type'] = 'circle';
+                    var point = new BMap.Point(rn_obj[i].lng, rn_obj[i].lat);
+                    var icon = new BMap.Icon('{% static "img/circle.svg" %}', new BMap.Size(25, 25));
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var nums = rn_obj[i].nums;
+                    var warning1 = rn_obj[i].warning1Nums;
+                    var warning2 = rn_obj[i].warning2Nums;
+                    var warning3 = rn_obj[i].warning3Nums;
+                    if (nums < warning3) {
+                        city['color'] = '#53abff';
+                        city['speed'] = 0.2;
+                        city['status'] = '空闲';
+                    } else if (nums < warning2) {
+                        city['color'] = '#ffb700';
+                        city['speed'] = 0.2;
+                        city['status'] = '拥挤';
+                    } else if (nums < warning1) {
+                        city['color'] = '#ff7e00';
+                        city['speed'] = 0.2;
+                        city['status'] = '饱和';
+                    } else {
+                        city['color'] = '#d81e06';
+                        city['speed'] = 0.5;
+                        city['status'] = '爆满';
+                    }
+                    addOverHandler(rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
+                    map.addOverlay(marker);
+                    citys.push(city);
+                }
+                var flashMarkerLayer = new FlashMarker(map, citys);
             }
-            heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-            map.addOverlay(heatmapOverlay);
-            heatmapOverlay.setDataSet({data: points, max: 100});
-            heatmapOverlay.show();
+        });
+    }
+
+    heatmap_scenic(); // 默认执行
+    function heatmap_onchange() {
+        var myselect = document.getElementById("heatmap_selected");
+        var index = myselect.selectedIndex;
+        var v = myselect.options[index].value;
+        if (v == "1") {
+            heatmap_nums();
+        } else {
+            heatmap_scenic();
         }
-    });
+    }
 </script>
 <script type="text/javascript">
     var chart;
@@ -381,7 +484,7 @@
     AmCharts.ready(function () {
         // SERIAL CHART
         chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData3;
+        chart.dataProvider = chartData3.reverse();
         chart.categoryField = "date";
         chart.startDuration = 1;
 
