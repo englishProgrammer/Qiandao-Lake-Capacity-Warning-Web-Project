@@ -147,6 +147,10 @@ html, body {
     margin: 10px 20px 10px 0;
 }
 
+.container-tag:hover {
+    color: white;
+}
+
 /* 模块内容的div */
 .container-content {
     width: 100%;
@@ -231,7 +235,8 @@ html, body {
     width: 50%;
     float: left;
 }
-.content-curwarn{
+
+.content-curwarn {
     width: 100%;
     height: 20px;
     line-height: 20px;
@@ -241,11 +246,17 @@ html, body {
     color: #ffffff;
     margin-top: 3px;
 }
-.piedata-title{
+
+.piedata-title {
     width: 50%;
     text-align: center;
     height: 40px;
     line-height: 40px;
     float: left;
     font-weight: bold;
+}
+
+select, option {
+    text-align: center;
+    text-align-last: center;
 }
