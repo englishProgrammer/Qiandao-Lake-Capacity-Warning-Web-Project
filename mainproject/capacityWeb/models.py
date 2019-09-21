@@ -32,7 +32,7 @@ class Recordnums(models.Model):
                                 null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+
         db_table = 'recordnums'
 
 

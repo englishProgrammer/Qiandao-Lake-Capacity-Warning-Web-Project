@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>千岛湖旅游景区承载量预警-主页</title>
+
     <!-- StyleSheet -->
     <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -50,6 +51,7 @@
     </div>
 </div>
 <div class="container-main">
+
     <div class="container-block" id="numdata">
         <div class="container-header">
             <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
@@ -222,6 +224,8 @@
         </div>
     </div>
 </div>
+
+{% block baiduimg %}
 <script type="text/javascript">
     // 百度地图API功能
     var map = new BMap.Map("container-heatmap");    // 创建Map实例
@@ -273,6 +277,8 @@
         }
     });
 </script>
+{% endblock %}
+
 <script type="text/javascript">
     var chart;
     var chartData1 = {{ scenicrank_data }};

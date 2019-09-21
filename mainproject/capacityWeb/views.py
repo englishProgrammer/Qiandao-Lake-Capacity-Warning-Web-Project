@@ -1,12 +1,13 @@
 import datetime, json, random, itertools
 import decimal
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.core import serializers
 from django.db import connection
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count, Min, Max, Sum
 
 
 def test(request):
@@ -255,7 +256,7 @@ def getHeatMapPoints(request):
     res_json[0]['scenic_data'] = scenic_data
     # 人数记录表
     # query_time = str(datetime.datetime.now())[0:17] + ‘%’
-    query_time = '2019-09-15 10:27%'
+    query_time = '2019-09-20 15:21%'
     with connection.cursor() as cursor:
         query = "SELECT recordnums.scenicId,recordnums.camId,SUM(nums) AS all_nums,camLgn,camLat FROM recordnums,camera WHERE recordnums.camId = camera.camId AND recordnums.scenicId = camera.scenicId AND recordnums.createAt LIKE %s GROUP BY recordnums.scenicId,recordnums.camId"
         cursor.execute(query, [query_time])
@@ -291,3 +292,69 @@ def index(request):
     curwarn_context = getCurrentWarn()
     context.update(curwarn_context)
     return render(request, 'index.html', context=context)
+
+
+def meifeng(request):
+    """
+    :param request:
+    :return: 返回梅峰岛景区信息
+    """
+    # 参数
+    context = {}
+    # 游客人数模块
+    tourist_context = getTouristNums()
+    context.update(tourist_context)
+    # 预警次数模块
+    warnnums_context = getWarnNums()
+    context.update(warnnums_context)
+    # 人数排行模块
+    scenicrank_context = getScenicRank()
+    context.update(scenicrank_context)
+    # 预警排行模块
+    warnrank_context = getWarnRank()
+    context.update(warnrank_context)
+    # 景区人数变化模块
+    numbar_context = getNumBar()
+    context.update(numbar_context)
+    # 当前预警信息模块
+    curwarn_context = getCurrentWarn()
+    context.update(curwarn_context)
+
+    return render(request, 'mf_scenic.html', context=context)
+
+
+def getScenicHeartMapData(request):
+    _scenicid = request.GET['_scenicid']  # 后台发送json请求时，附带上岛屿的编号
+    _scenicid = int(_scenicid)
+    result = Recordnums.objects.values("scenicid", "camid").annotate(latest=Max("id")).filter(scenicid=_scenicid)
+    # select scenicid,camid,Max('id') as latest from recordnums where scenucud=1 group by scenicid,camid
+    # 因为最新插入的数据id是肯定比之前的大的，所有我们先找到指定岛指定摄像头的数据的最大id
+
+    result_latest = []
+    # 存储某一个岛所有摄像头的最新数据
+    for i in result:
+        # i表示某一个摄像头的数据
+        latest_id = i['latest']
+        # latest_id 表示i这个摄像头的最新数据的id
+        # 字典的访问是i['latest']不是i.latest
+        select_latest_nums = Recordnums.objects.filter(id=latest_id).values("scenicid","id", "camid",
+                                                                       "nums")
+        # 根据最新数据的id来查询Recordnums表，获得人数
+        select_latest_nums = select_latest_nums[0]
+        # 查询结果是一个list，即使结果只有一个，所以需要[0]
+        num = select_latest_nums['nums']
+        sceid= select_latest_nums['scenicid']
+        cid = select_latest_nums['camid']
+        # 获得最新数据的人数num，岛屿id，摄像头id以便查询该摄像头的经纬度
+        select_latest_point = Camera.objects.filter(scenicid=sceid, camid=cid).values("camlgn","camlat")
+        # 查询Camera表获得经纬度
+        result_send = {};
+        result_send["count"] = num
+        result_send["lng"] = select_latest_point[0]['camlgn']
+        result_send["lat"] = select_latest_point[0]['camlat']
+        # 按照热力图需要的数据格式存入字典
+        result_latest.append(result_send)
+        # 将各个摄像头的数据存入result_latest
+
+    return JsonResponse(result_latest, safe=False, json_dumps_params={'ensure_ascii': False})
+

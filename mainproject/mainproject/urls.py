@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls import url
 from capacityWeb import views as capViews
 
@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^indexV0/', capViews.indexV0),
     url(r'^test/', capViews.test),
     url(r'^getHeatMapPoints/', capViews.getHeatMapPoints),
+    path('capacityWeb/', include('capacityWeb.urls')),  # 设置二级路由，
 ]

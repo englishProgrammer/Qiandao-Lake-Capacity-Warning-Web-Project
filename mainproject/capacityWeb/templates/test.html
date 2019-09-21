@@ -11,40 +11,6 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
-<div id="population_chart" data-sort="true" data-width="200" class="jChart chart-sm"></div>
-{#<div id="bar_of_pies" data-sort="true" data-width="200" class="jChart chart-sm" name="My Favorite Pies">#}
-{#	<div class="define-chart-row" data-color="red" title="Pumpkin">100</div>#}
-{#	<div class="define-chart-row" data-color="gray" title="Pecan">24</div>#}
-{#	<div class="define-chart-row" data-color="green" title="Cherry">17</div>#}
-{#	<div class="define-chart-row" data-color="orange" title="Apple">26</div>#}
-{#	<div class="define-chart-row" data-color="black" title="Rhubarb">12</div>#}
-{#	<div class="define-chart-row" data-color="blue" title="Chocolate Cream">8</div>#}
-{##}
-{#	<div class="define-chart-footer">10</div>#}
-{#	<div class="define-chart-footer">20</div>#}
-{#	<div class="define-chart-footer">30</div>#}
-{#</div>#}
-<script>
-    $(document).ready(function () {
-        $("#population_chart").jChart({
-            name: "North American Regional Population Loss 2014",
-            headers: ["Arizona", "Michigan", "Ontario", "British Columbia", "Texas"],
-            values: [10, 14, 25, 10, 13],
-            footers: [5, 10, 15, 20, 25],
-            colors: ["#1000ff", "#006eff", "#00b6ff", "#00fff6", "#00ff90"],
-        })
-        ;
-    });
-</script>
-{#<script>#}
-{#    $(document).ready(function () {#}
-{#        $('#population_chart').jChart({#}
-{#            xLabel: 'population',#}
-{#        })#}
-{#    })#}
-{#</script>#}
-<script>
-    $('#bar_of_pies').jChart();
-</script>
+<p id="content">{{ sqlResult }}</p>
 </body>
 </html>
