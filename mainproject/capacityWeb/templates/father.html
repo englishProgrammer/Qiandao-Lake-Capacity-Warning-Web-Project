@@ -1,0 +1,521 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>千岛湖旅游景区承载量预警-主页</title>
+
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel='stylesheet' href="{% static 'css/menu.css' %}">
+    <!-- JavaScript-->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/amcharts.js' %}"></script>
+    <script src="{% static 'js/serial.js' %}"></script>
+    <script src="{% static 'js/pie.js' %}"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="img-logo"><img src="{% static 'img/logo.jpg' %}" alt="logo"></div>
+    <div class="header-title">千岛湖旅游景区承载量预警平台</div>
+    <div class="header-navbar">
+        <ul class="menu boxed clearfix">
+            <li><a href="#"><i class="fa fa-home"></i>主页</a></li>
+            <li>
+                <a href="#"><i class="fa fa-star"></i>景区详情</a>
+                <ul>
+                    <li><a href="#"><i class="fa fa-star"></i>景区详情1</a></li>
+                    <li><a href="#"><i class="fa fa-star"></i>景区详情2</a></li>
+                    <li><a href="#"><i class="fa fa-star"></i>景区详情3</a></li>
+                </ul>
+            </li>
+            <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
+            <li>
+                <a href="#"><i class="fa fa-video-camera"></i>监控</a>
+                <ul>
+                    <li><a href="#"><i class="fa fa-video-camera"></i>监控1</a></li>
+                    <li><a href="#"><i class="fa fa-video-camera"></i>监控2</a></li>
+                    <li><a href="#"><i class="fa fa-video-camera"></i>监控3</a></li>
+                </ul>
+            </li>
+            <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
+            <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+        </ul>
+    </div>
+</div>
+<div class="container-main">
+
+    <div class="container-block" id="numdata">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
+            <div class="container-tag">历史数据</div>
+        </div>
+        <div class="container-content" id="container-numdata">
+            <div class="numdata-line title">本周人数</div>
+            <div class="numdata-line title">同比变化率</div>
+            <div class="numdata-line title">环比变化率</div>
+            <div class="numdata-line data">{{ num_this_week }}<span class="unit"> 人</span></div>
+{#            {% if rn_sum_week_growth > 0 %}#}
+            {% if week_yearOveryear_rate > 0 %}
+             <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                 class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                 {{ week_yearOveryear_rate|floatformat:2 }}<span
+                        class="unit"> 人</span></div>
+             {% else %}
+             <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                 class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                 {{ week_yearOveryear_rate|floatformat:2 }}<span
+                        class="unit"> 人</span></div>
+            {% endif %}
+            <!--显示本周同比变化率-->
+            {% if week_weekOverweek_rate > 0 %}
+                <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                  class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                    {{ week_weekOverweek_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+                {% else %}
+                <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                  class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                    {{ week_weekOverweek_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% endif %}
+            <!--显示本周环比变化率-->
+
+            <div class="numdata-line title">本月人数</div>
+            <div class="numdata-line title">同比变化率</div>
+            <div class="numdata-line title">环比变化率</div>
+            <div class="numdata-line data">{{ num_this_month }}<span class="unit"> 人</span></div>
+            {% if month_yearOveryear_rate > 0 %}
+             <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                 class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                 {{ month_yearOveryear_rate|floatformat:2 }}<span
+                        class="unit"> 人</span></div>
+             {% else %}
+             <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                 class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                 {{ month_yearOveryear_rate|floatformat:2 }}<span
+                        class="unit"> 人</span></div>
+            {% endif %}
+            <!--显示本月同比变化率-->
+            {% if month_monthOvermonth_rate > 0 %}
+                <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                  class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                    {{ month_monthOvermonth_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+                {% else %}
+                <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                  class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                    {{ month_monthOvermonth_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% endif %}
+            <!--显示本月环比变化率-->
+        </div>
+    </div>
+    <div class="container-block" id="heatmap">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
+            <div class="container-tag">当前情况</div>
+        </div>
+        <div class="container-content" id="container-heatmap">
+
+        </div>
+    </div>
+    <div class="container-block" id="warndata">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
+            <div class="container-tag">历史数据</div>
+        </div>
+        <div class="container-content" id="container-warndata">
+            <div class="warndata-line title">本周预警次数</div>
+            <div class="warndata-line title">同比变化量</div>
+            <div class="warndata-line title">同比变化率</div>
+            <div class="warndata-line data">{{ rw_count_week }}<span class="unit"> 次</span></div>
+            {% if rw_count_week_growth >= 0 %}
+                <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                   aria-hidden="true"
+                                                   style="color: red"></i>{{ rw_count_week_growth }}<span
+                        class="unit"> 次</span></div>
+                <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                   aria-hidden="true"
+                                                   style="color: red"></i>{{ rw_count_week_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% else %}
+                <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                   aria-hidden="true"
+                                                   style="color: green"></i>{{ rw_count_week_growth }}<span
+                        class="unit"> 次</span></div>
+                <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                   aria-hidden="true"
+                                                   style="color: green"></i>{{ rw_count_week_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% endif %}
+            <div class="warndata-line title">本月预警次数</div>
+            <div class="warndata-line title">同比变化量</div>
+            <div class="warndata-line title">同比变化率</div>
+            <div class="warndata-line data">{{ rw_count_month }}<span class="unit"> 次</span></div>
+            {% if rw_count_month_growth > 0 %}
+                <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                   aria-hidden="true"
+                                                   style="color: red"></i>{{ rw_count_month_growth }}<span
+                        class="unit"> 次</span></div>
+                <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                   aria-hidden="true"
+                                                   style="color: red"></i>{{ rw_count_month_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% else %}
+                <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                   aria-hidden="true"
+                                                   style="color: green"></i>{{ rw_count_month_growth }}<span
+                        class="unit"> 次</span></div>
+                <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                   aria-hidden="true"
+                                                   style="color: green"></i>{{ rw_count_month_rate|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container-block" id="scenicrank">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+            <div class="container-tag">本月</div>
+        </div>
+        <div class="container-content" id="container-scenicrank">
+
+        </div>
+    </div>
+    <div class="container-block" id="warnrank">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-list-ul"></i> 预警次数排行</div>
+            <div class="container-tag">本月</div>
+        </div>
+        <div class="container-content" id="container-warnrank">
+
+        </div>
+    </div>
+    <div class="container-block" id="numbar">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
+            <div class="container-tag">历史数据</div>
+        </div>
+        <div class="container-content" id="container-numbar">
+
+        </div>
+    </div>
+    <div class="container-block" id="piedata">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
+            <div class="container-tag">本月</div>
+        </div>
+        <div class="piedata-title">游客人数</div>
+        <div class="piedata-title">景区预警</div>
+        <div class="container-content" id="container-piedata1"></div>
+        <div class="container-content" id="container-piedata2"></div>
+    </div>
+    <div class="container-block" id="current-warning">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
+            <div class="container-tag">当前情况</div>
+        </div>
+        <div class="container-content" id="container-warning">
+            {% for item in curwarn %}
+                {% if item.type == 1 and item.level == 1 %}
+                <div class="content-curwarn" style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
+                {% elif item.type == 1 and item.level == 2 %}
+                <div class="content-curwarn" style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
+                {% elif item.type == 1 and item.level == 3 %}
+                <div class="content-curwarn" style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% block baiduimg %}
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("container-heatmap");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(119.018693, 29.600992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    //添加地图类型控件
+    map.addControl(new BMap.MapTypeControl({
+        mapTypes: [
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]
+    }));
+    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    function addMarker(point) {
+        var marker = new BMap.Marker(point);
+        map.addOverlay(marker);
+    }
+
+    // 坐标点
+    $.ajax({
+        url: '/getHeatMapPoints/',
+        type: 'POST',
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+        async: true,
+        success: function (arg) {
+            // 若调用成功，向地图添加标记
+            var obj = jQuery.parseJSON(arg)[0];
+            scenic_points_obj = obj['scenic_data'];
+            for (var i = 0; i < scenic_points_obj.length; i++) {
+                var point = new BMap.Point(scenic_points_obj[i].fields.lgn, scenic_points_obj[i].fields.lat
+                    )
+                ;
+                addMarker(point);
+            }
+            cam_points_obj = obj['rn_data'];
+            var points = [];
+            for (i = 0; i < cam_points_obj.length; i++) {
+                points.push({
+                    'lng': cam_points_obj[i].camLgn,
+                    'lat': cam_points_obj[i].camLat,
+                    'count': cam_points_obj[i].all_nums
+                })
+            }
+            heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+            map.addOverlay(heatmapOverlay);
+            heatmapOverlay.setDataSet({data: points, max: 100});
+            heatmapOverlay.show();
+        }
+    });
+</script>
+{% endblock %}
+
+<script type="text/javascript">
+    var chart;
+    var chartData1 = {{ scenicrank_data }};
+
+    AmCharts.ready(function () {
+        // SERIAL CHART
+        chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData1;
+        chart.categoryField = "scenic";
+        chart.startDuration = 1;
+        chart.rotate = true;
+        chart.marginTop = 2;
+        chart.marginLeft = 0;
+        chart.fontSize = 14;
+
+        // AXES
+        // category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.gridPosition = "start";
+        categoryAxis.axisColor = "#c3c3c3";
+        categoryAxis.dashLength = 3;
+        categoryAxis.fontSize = 12;
+
+        // value
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.dashLength = 3;
+        valueAxis.axisAlpha = 0.2;
+        valueAxis.position = "bottom";
+        valueAxis.minorGridEnabled = true;
+        valueAxis.minorGridAlpha = 0.08;
+        valueAxis.gridAlpha = 0.15;
+        valueAxis.fontSize = 10;
+        chart.addValueAxis(valueAxis);
+
+        // GRAPHS
+        // column graph
+        var graph1 = new AmCharts.AmGraph();
+        graph1.type = "column";
+        graph1.title = "人数";
+        graph1.valueField = "nums";
+        graph1.lineAlpha = 0;
+        graph1.fillColors = "#607fd9";
+        graph1.fillAlphas = 0.8;
+        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
+        chart.addGraph(graph1);
+
+        // WRITE
+        chart.write("container-scenicrank");
+    });
+</script>
+<script type="text/javascript">
+    var chart;
+
+    var chartData2 = {{ warnrank_data }};
+    AmCharts.ready(function () {
+        // SERIAL CHART
+        chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData2;
+        chart.categoryField = "scenic";
+        chart.startDuration = 1;
+        chart.rotate = true;
+        chart.marginTop = 2;
+        chart.marginLeft = 0;
+        chart.fontSize = 14;
+
+        // AXES
+        // category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.gridPosition = "start";
+        categoryAxis.axisColor = "#c3c3c3";
+        categoryAxis.dashLength = 3;
+        categoryAxis.fontSize = 12;
+
+        // value
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.dashLength = 3;
+        valueAxis.axisAlpha = 0.2;
+        valueAxis.position = "bottom";
+        valueAxis.minorGridEnabled = true;
+        valueAxis.minorGridAlpha = 0.08;
+        valueAxis.gridAlpha = 0.15;
+        valueAxis.fontSize = 10;
+        chart.addValueAxis(valueAxis);
+
+        // GRAPHS
+        // column graph
+        var graph1 = new AmCharts.AmGraph();
+        graph1.type = "column";
+        graph1.title = "预警次数";
+        graph1.valueField = "times";
+        graph1.lineAlpha = 0;
+        graph1.fillColors = "#d92202";
+        graph1.fillAlphas = 0.8;
+        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
+        chart.addGraph(graph1);
+
+        // WRITE
+        chart.write("container-warnrank");
+    });
+</script>
+<script type="text/javascript">
+    var chart;
+    var chartData3 = {{ numbar_data }};
+
+
+    AmCharts.ready(function () {
+        // SERIAL CHART
+        chart = new AmCharts.AmSerialChart();
+        chart.dataProvider = chartData3;
+        chart.categoryField = "date";
+        chart.startDuration = 1;
+
+        chart.handDrawn = true;
+        chart.handDrawnScatter = 3;
+
+        // AXES
+        // category
+        var categoryAxis = chart.categoryAxis;
+        categoryAxis.gridPosition = "start";
+
+        // value
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.axisAlpha = 0;
+        chart.addValueAxis(valueAxis);
+
+        // GRAPHS
+        // column graph
+        var graph1 = new AmCharts.AmGraph();
+        graph1.type = "column";
+        graph1.title = "今年人数";
+        graph1.lineColor = "#00d570";
+        graph1.valueField = "nums";
+        graph1.lineAlpha = 1;
+        graph1.fillAlphas = 1;
+        graph1.dashLengthField = "dashLengthColumn";
+        graph1.alphaField = "alpha";
+        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
+        chart.addGraph(graph1);
+
+        // line
+        var graph2 = new AmCharts.AmGraph();
+        graph2.type = "line";
+        graph2.title = "去年人数";
+        graph2.lineColor = "#fcd202";
+        graph2.valueField = "nums_lastyear";
+        graph2.lineThickness = 3;
+        graph2.bullet = "round";
+        graph2.bulletBorderThickness = 3;
+        graph2.bulletBorderColor = "#fcd202";
+        graph2.bulletBorderAlpha = 1;
+        graph2.bulletColor = "#ffffff";
+        graph2.dashLengthField = "dashLengthLine";
+        graph2.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
+        chart.addGraph(graph2);
+
+        // LEGEND
+        var legend = new AmCharts.AmLegend();
+        legend.useGraphSettings = true;
+        legend.position = 'top';
+        chart.addLegend(legend);
+
+        // WRITE
+        chart.write("container-numbar");
+    });
+</script>
+<script type="text/javascript">
+    var chart;
+    var legend;
+
+    var chartData4 = {{ scenicrank_data }};
+
+    AmCharts.ready(function () {
+        // PIE CHART
+        chart = new AmCharts.AmPieChart();
+        chart.dataProvider = chartData4;
+        chart.titleField = "scenic";
+        chart.valueField = "nums";
+        chart.outlineColor = "#FFFFFF";
+        chart.outlineAlpha = 0.8;
+        chart.outlineThickness = 2;
+        chart.labelsEnabled = false;
+        chart.pieX = '50%';
+        chart.pieY = '30%';
+        // LEGEND
+        // WRITE
+        chart.write("container-piedata1");
+    });
+</script>
+<script type="text/javascript">
+    var chart;
+    var legend;
+
+    var chartData5 = {{ warnrank_data }};
+
+    AmCharts.ready(function () {
+        // PIE CHART
+        chart = new AmCharts.AmPieChart();
+        chart.dataProvider = chartData5;
+        chart.titleField = "scenic";
+        chart.valueField = "times";
+        chart.outlineColor = "#FFFFFF";
+        chart.outlineAlpha = 0.8;
+        chart.outlineThickness = 2;
+        chart.labelsEnabled = false;
+        chart.pieX = '50%';
+        chart.pieY = '30%';
+        // WRITE
+        chart.write("container-piedata2");
+    });
+</script>
+</body>
+</html>
