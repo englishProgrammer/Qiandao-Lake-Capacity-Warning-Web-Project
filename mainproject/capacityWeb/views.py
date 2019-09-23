@@ -82,8 +82,8 @@ def get_current_week():
         monday -= one_day
     while sunday.weekday() != 6:
         sunday += one_day
-    # 返回当前的星期一和星期天的日期
-    return monday, sunday
+    # 返回当前的星期一的上一天和星期天的下一天
+    return monday - relativedelta(days=1), sunday + relativedelta(days=1)
 
 
 # Create your views here.
@@ -107,24 +107,26 @@ def getTouristNums():
     current_time = datetime.datetime.now()
     # 本周星期一，星期天
     monday, sunday = get_current_week()
-    query_time_monday, query_time_sunday = str(monday)[:19], str(sunday)[:19]
+    query_time_monday, query_time_sunday = str(monday)[:10], str(sunday)[:10]
+    query_time_monday, query_time_sunday = '2019-09-15', '2019-09-23'
     # 去年同日期
     monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
-    query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:19], str(sunday_lastyear)[:19]
+    query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:10], str(sunday_lastyear)[:10]
+    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-15', '2018-09-23'
     with connection.cursor() as cursor:
         # 查询本周游客人数
-        query = "SELECT SUM(nums) as rn_sum_week FROM recordnums WHERE createAt >= %s AND createAt <= %s"
+        query = "SELECT SUM(nums) as rn_sum_week FROM recordnums WHERE createAt > %s AND createAt < %s"
         cursor.execute(query, [query_time_monday, query_time_sunday])
         rn_sum_week = dictfetchall(cursor)[0]['rn_sum_week']
         # 查询上一年本周游客人数
-        query = "SELECT SUM(nums) as rn_sum_week_lastyear FROM recordnums WHERE createAt >= %s AND createAt <= %s"
+        query = "SELECT SUM(nums) as rn_sum_week_lastyear FROM recordnums WHERE createAt > %s AND createAt < %s"
         cursor.execute(query, [query_time_monday_lastyear, query_time_sunday_lastyear])
         rn_sum_week_lastyear = dictfetchall(cursor)[0]['rn_sum_week_lastyear']
         # 查询本月游客人数
         query = "SELECT SUM(nums) as rn_sum_month FROM recordnums WHERE `year`=%s AND `month` = %s"
         cursor.execute(query, [current_time.year, current_time.month])
         rn_sum_month = dictfetchall(cursor)[0]['rn_sum_month']
-        # 查询本月游客人数
+        # 查询上一年本月游客人数
         query = "SELECT SUM(nums) as rn_sum_month_lastyear FROM recordnums WHERE `year`=%s AND `month` = %s"
         cursor.execute(query, [current_time.year - 1, current_time.month])
         rn_sum_month_lastyear = dictfetchall(cursor)[0]['rn_sum_month_lastyear']
@@ -132,7 +134,6 @@ def getTouristNums():
         context['rn_sum_week'] = rn_sum_week
         context['rn_sum_week_growth'] = rn_sum_week - rn_sum_week_lastyear
         context['rn_sum_week_rate'] = (rn_sum_week - rn_sum_week_lastyear) / rn_sum_week * 100
-
         context['rn_sum_month'] = rn_sum_month
         # 为了测试！到时改回来
         context['rn_sum_month_growth'] = -(rn_sum_month - rn_sum_month_lastyear)
@@ -142,7 +143,7 @@ def getTouristNums():
 
 def getWarnNums():
     """
-    游客人数模块，得到历史游客人数
+    预警次数模块，得到历史预警次数
     :return: context
     """
     context = {}
@@ -150,17 +151,19 @@ def getWarnNums():
     current_time = datetime.datetime.now()
     # 本周星期一，星期天
     monday, sunday = get_current_week()
-    query_time_monday, query_time_sunday = str(monday)[:19], str(sunday)[:19]
+    query_time_monday, query_time_sunday = str(monday)[:10], str(sunday)[:10]
+    query_time_monday, query_time_sunday = '2019-09-15', '2019-09-23'
     # 去年同日期
     monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
-    query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:19], str(sunday_lastyear)[:19]
+    query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:10], str(sunday_lastyear)[:10]
+    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-15', '2018-09-23'
     with connection.cursor() as cursor:
         # 查询本周游客人数
-        query = "SELECT COUNT(warningId) as rw_count_week FROM recordwarnings WHERE createAt >= %s AND createAt <= %s"
+        query = "SELECT COUNT(warningId) as rw_count_week FROM recordwarnings WHERE createAt > %s AND createAt < %s"
         cursor.execute(query, [query_time_monday, query_time_sunday])
         rw_count_week = dictfetchall(cursor)[0]['rw_count_week']
         # 查询上一年本周游客人数
-        query = "SELECT COUNT(warningId) as rw_count_week_lastyear FROM recordwarnings WHERE createAt >= %s AND createAt <= %s"
+        query = "SELECT COUNT(warningId) as rw_count_week_lastyear FROM recordwarnings WHERE createAt > %s AND createAt < %s"
         cursor.execute(query, [query_time_monday_lastyear, query_time_sunday_lastyear])
         rw_count_week_lastyear = dictfetchall(cursor)[0]['rw_count_week_lastyear']
         # 查询本月游客人数
@@ -201,7 +204,7 @@ def getScenicRank():
 
 def getWarnRank():
     """
-    景区人数排行模块
+    预警次数排行模块
     :return: context:{'warnrank_data':[{'景区1':次数1,'景区2':次数2},...]}
     """
     context = {}
