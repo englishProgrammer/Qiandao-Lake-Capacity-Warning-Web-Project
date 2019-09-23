@@ -8,7 +8,7 @@ class Camera(models.Model):
     scenicid = models.ForeignKey('Scenic', models.DO_NOTHING, db_column='scenicId')  # Field name made lowercase.
     camplace = models.CharField(db_column='camPlace', max_length=255, blank=True,
                                 null=True)  # Field name made lowercase.
-    camlgn = models.FloatField(db_column='camLgn', blank=True, null=True)  # Field name made lowercase.
+    camlng = models.FloatField(db_column='camLng', blank=True, null=True)  # Field name made lowercase.
     camlat = models.FloatField(db_column='camLat', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -58,7 +58,7 @@ class Scenic(models.Model):
     warning1nums = models.IntegerField(db_column='warning1Nums', blank=True, null=True)  # Field name made lowercase.
     warning2nums = models.IntegerField(db_column='warning2Nums', blank=True, null=True)  # Field name made lowercase.
     warning3nums = models.IntegerField(db_column='warning3Nums', blank=True, null=True)  # Field name made lowercase.
-    lgn = models.FloatField(blank=True, null=True)
+    lng = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
 
     class Meta:

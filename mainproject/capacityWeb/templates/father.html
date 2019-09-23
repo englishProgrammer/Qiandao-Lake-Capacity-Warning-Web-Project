@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>千岛湖旅游景区承载量预警-主页</title>
+    <title>千岛湖旅游景区承载量预警-景区信息</title>
 
     <!-- StyleSheet -->
     <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
@@ -69,14 +69,14 @@
                                                   aria-hidden="true"
                                                   style="color: red"></i>
                  {{ week_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> 人</span></div>
+                        class="unit"> %</span></div>
              {% else %}
              <div class="numdata-line data"><i id="week_yearOveryear_rate"
                                                  class="fa fa-arrow-down"
                                                   aria-hidden="true"
                                                   style="color: green"></i>
                  {{ week_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> 人</span></div>
+                        class="unit"> %</span></div>
             {% endif %}
             <!--显示本周同比变化率-->
             {% if week_weekOverweek_rate > 0 %}
@@ -106,14 +106,14 @@
                                                   aria-hidden="true"
                                                   style="color: red"></i>
                  {{ month_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> 人</span></div>
+                        class="unit"> %</span></div>
              {% else %}
              <div class="numdata-line data"><i id="month_yearOveryear_rate"
                                                  class="fa fa-arrow-down"
                                                   aria-hidden="true"
                                                   style="color: green"></i>
                  {{ month_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> 人</span></div>
+                        class="unit"> %</span></div>
             {% endif %}
             <!--显示本月同比变化率-->
             {% if month_monthOvermonth_rate > 0 %}
@@ -150,51 +150,77 @@
         </div>
         <div class="container-content" id="container-warndata">
             <div class="warndata-line title">本周预警次数</div>
-            <div class="warndata-line title">同比变化量</div>
             <div class="warndata-line title">同比变化率</div>
-            <div class="warndata-line data">{{ rw_count_week }}<span class="unit"> 次</span></div>
-            {% if rw_count_week_growth >= 0 %}
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_week_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_week_rate|floatformat:2}}<span
+            <div class="warndata-line title">环比变化率</div>
+            <div class="warndata-line data">{{ num_this_week_warn }}<span class="unit"> 次</span></div>
+            {% if week_yearOveryear_rate_warn > 0 %}
+             <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                 class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                 {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
                         class="unit"> %</span></div>
-            {% else %}
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_week_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_week_rate|floatformat:2}}<span
+             {% else %}
+             <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                 class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                 {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% endif %}
+            <!--显示本周同比变化率-->
+            {% if week_weekOverweek_rate_warn > 0 %}
+                <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                  class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                    {{ week_weekOverweek_rate_warn|floatformat:2}}<span
+                        class="unit"> %</span></div>
+                {% else %}
+                <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                  class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                    {{ week_weekOverweek_rate_warn|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% endif %}
+            <!--显示本周环比变化率-->
             <div class="warndata-line title">本月预警次数</div>
-            <div class="warndata-line title">同比变化量</div>
             <div class="warndata-line title">同比变化率</div>
-            <div class="warndata-line data">{{ rw_count_month }}<span class="unit"> 次</span></div>
-            {% if rw_count_month_growth > 0 %}
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_month_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_month_rate|floatformat:2}}<span
+            <div class="warndata-line title">环比变化率</div>
+            <div class="warndata-line data">{{ num_this_month_warn }}<span class="unit"> 次</span></div>
+            {% if month_yearOveryear_rate_warn > 0 %}
+             <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                 class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                 {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
                         class="unit"> %</span></div>
-            {% else %}
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_month_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_month_rate|floatformat:2}}<span
+             {% else %}
+             <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                 class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                 {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% endif %}
+            <!--显示本月同比变化率-->
+            {% if month_monthOvermonth_rate_warn > 0 %}
+                <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                  class="fa fa-arrow-up"
+                                                  aria-hidden="true"
+                                                  style="color: red"></i>
+                    {{ month_monthOvermonth_rate_warn|floatformat:2}}<span
+                        class="unit"> %</span></div>
+                {% else %}
+                <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                  class="fa fa-arrow-down"
+                                                  aria-hidden="true"
+                                                  style="color: green"></i>
+                    {{ month_monthOvermonth_rate_warn|floatformat:2}}<span
+                        class="unit"> %</span></div>
+            {% endif %}
+            <!--显示本月环比变化率-->
         </div>
     </div>
     <div class="container-block" id="scenicrank">

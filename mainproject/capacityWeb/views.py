@@ -101,12 +101,33 @@ def getIntervalTouristNums(start, end, scenicid):
     return sum_
 
 
-def getScenicTouristNums(scenicid):
-    contexts = {}
+def getIntervalWarnNums(start, end, scenicid):
+    """
+
+    :param start:
+    :param end:
+    :param scenicid:
+    :return: 获得某岛的一段时间内的预警次数
+    """
+    start_str = str(start)[:10]
+    end = end + relativedelta(days=1)
+    end_str = str(end)[:10]
+
+    sum_ = 0
+    result = Recordwarnings.objects.filter(scenicid=scenicid, createat__gt=start_str, createat__lt=end_str)
+    for r in result:
+        sum_ += 1
+
+    return sum_
+
+
+def getYouNeedInterval():
+    """
+
+    :return:获得本周起始时间，上一周起始时间，去年的本周起始时间，
+            本月份起始时间，上一个月起始时间，去年本月起始时间
+    """
     current_time = datetime.datetime.now()
-    # current_time_ = datetime.datetime(2019,9,2)
-    # current_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
-    # month_today = current_time.strftime("%Y-%m-%d")
     month_today = current_time
     month_start = current_time - relativedelta(days=current_time.day - 1)
 
@@ -115,37 +136,76 @@ def getScenicTouristNums(scenicid):
     month_start_lastmonth, month_today_lastmonth = month_start - relativedelta(months=1), month_today - relativedelta(
         months=1)
     # 获得本月的起始时间，去年的本月起始时间，上个月的起始时间
-    num_this_month = getIntervalTouristNums(month_start, month_today, scenicid)
-    num_this_month_lastyear = getIntervalTouristNums(month_start_lastyear, month_today_lastyear, scenicid)
-    num_this_month_lastmonth = getIntervalTouristNums(month_start_lastmonth, month_today_lastmonth, scenicid)
-    # 通过getIntervalTouristNums获得本月份，去年本月份，上个月的游客人数
-
-    month_yearOveryear_rate = (num_this_month - num_this_month_lastyear) / (num_this_month+1) * 100
-    month_monthOvermonth_rate = (num_this_month - num_this_month_lastmonth) / (num_this_month_lastmonth+1) * 100
-    contexts['month_yearOveryear_rate'] = month_yearOveryear_rate
-    contexts['month_monthOvermonth_rate'] = month_monthOvermonth_rate
-    contexts['num_this_month'] = num_this_month
-    # 计算出月同比和环比增长率和环比率比保存到contexts中
 
     monday, sunday = get_current_week()
     sunday = current_time
     monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
     monday_lastweek, sunday_lastweek = monday - relativedelta(days=7), sunday - relativedelta(days=7)
+
     # 获得本周的起始时间，去年的本周起始时间，上周起始时间
+
+    return monday, sunday, monday_lastweek, sunday_lastweek, monday_lastyear, sunday_lastyear, \
+           month_start, month_today, month_start_lastmonth, month_today_lastmonth, month_start_lastyear, \
+           month_today_lastyear
+
+
+def getYearOverYearRate(nowDate, prevDate):
+    """
+
+    :param nowDate:
+    :param prevDate:
+    :return:返回同比增长率
+    """
+    return (nowDate - prevDate) / (nowDate + 1) * 100
+
+
+def getMonthOverMonthRate(nowDate, prevDate):
+    """
+
+    :param nowDate:
+    :param prevDate:
+    :return: 返回环比增长率
+    """
+    return (nowDate - prevDate) / (prevDate + 1) * 100
+
+
+def getScenicTouristNums(scenicid):
+    """
+
+    :param scenicid:
+    :return: 得到某岛旅客人数
+    """
+    contexts = {}
+
+    monday, sunday, monday_lastweek, sunday_lastweek, monday_lastyear, sunday_lastyear, \
+    month_start, month_today, month_start_lastmonth, month_today_lastmonth, month_start_lastyear, \
+    month_today_lastyear = getYouNeedInterval()
+
+    # 获得本周的起始时间，去年的本周起始时间，上周起始时间
+    # 本月份起始时间，上一个月起始时间，去年本月起始时间
+    num_this_month = getIntervalTouristNums(month_start, month_today, scenicid)
+    num_this_month_lastyear = getIntervalTouristNums(month_start_lastyear, month_today_lastyear, scenicid)
+    num_this_month_lastmonth = getIntervalTouristNums(month_start_lastmonth, month_today_lastmonth, scenicid)
+    # 通过getIntervalTouristNums获得本月份，去年本月份，上个月的游客人数
+
+    month_yearOveryear_rate = getYearOverYearRate(num_this_month, num_this_month_lastyear)
+    month_monthOvermonth_rate = getMonthOverMonthRate(num_this_month, num_this_month_lastmonth)
+    contexts['month_yearOveryear_rate'] = month_yearOveryear_rate
+    contexts['month_monthOvermonth_rate'] = month_monthOvermonth_rate
+    contexts['num_this_month'] = num_this_month
+    # 计算出月同比和环比增长率和环比率比保存到contexts中
 
     num_this_week = getIntervalTouristNums(monday, sunday, scenicid)
     num_this_week_lastyear = getIntervalTouristNums(monday_lastyear, sunday_lastyear, scenicid)
     num_this_week_lastweek = getIntervalTouristNums(monday_lastweek, sunday_lastweek, scenicid)
     # 通过getIntervalTouristNums获得本周，去年本周，上周的游客人数
 
-    week_yearOveryear_rate = (num_this_week - num_this_week_lastyear) / (num_this_week+1) * 100
-    week_weekOverweek_rate = (num_this_week - num_this_week_lastweek) / (num_this_week_lastweek+1) * 100
+    week_yearOveryear_rate = getYearOverYearRate(num_this_week, num_this_week_lastyear)
+    week_weekOverweek_rate = getMonthOverMonthRate(num_this_week, num_this_week_lastweek)
     contexts['week_yearOveryear_rate'] = week_yearOveryear_rate
     contexts['week_weekOverweek_rate'] = week_weekOverweek_rate
     contexts['num_this_week'] = num_this_week
     # 计算出周的同比增长率和环比增长率并保存到contexts字典中
-
-    contexta = {"sqlResult": [num_this_month, num_this_month_lastyear, num_this_month_lastmonth,num_this_week, num_this_week_lastyear, num_this_week_lastweek]}
 
     return contexts
 
@@ -193,6 +253,42 @@ def getTouristNums():
     return context
 
 
+def getScenicWarntNums(scenicid):
+    contexts = {}
+
+    monday, sunday, monday_lastweek, sunday_lastweek, monday_lastyear, sunday_lastyear, \
+    month_start, month_today, month_start_lastmonth, month_today_lastmonth, month_start_lastyear, \
+    month_today_lastyear = getYouNeedInterval()
+    # 获得本周的起始时间，去年的本周起始时间，上周起始时间
+    # 本月份起始时间，上一个月起始时间，去年本月起始时间
+
+    num_this_month = getIntervalWarnNums(month_start, month_today, scenicid)
+    num_this_month_lastyear = getIntervalWarnNums(month_start_lastyear, month_today_lastyear, scenicid)
+    num_this_month_lastmonth = getIntervalWarnNums(month_start_lastmonth, month_today_lastmonth, scenicid)
+    # 通过getIntervalWarnNums获得本月份，去年本月份，上个月的预警次数
+
+    month_yearOveryear_rate_warn = getYearOverYearRate(num_this_month, num_this_month_lastyear)
+    month_monthOvermonth_rate_warn = getMonthOverMonthRate(num_this_month, num_this_month_lastmonth)
+    contexts['month_yearOveryear_rate_warn'] = month_yearOveryear_rate_warn
+    contexts['month_monthOvermonth_rate_warn'] = month_monthOvermonth_rate_warn
+    contexts['num_this_month_warn'] = num_this_month
+    # 计算出月同比和环比增长率和环比率比保存到contexts中
+
+    num_this_week = getIntervalWarnNums(monday, sunday, scenicid)
+    num_this_week_lastyear = getIntervalWarnNums(monday_lastyear, sunday_lastyear, scenicid)
+    num_this_week_lastweek = getIntervalWarnNums(monday_lastweek, sunday_lastweek, scenicid)
+    # 通过getIntervalWarnNums获得本周，去年本周，上周的游客人数
+
+    week_yearOveryear_rate_warn = getYearOverYearRate(num_this_week, num_this_week_lastyear)
+    week_weekOverweek_rate_warn = getMonthOverMonthRate(num_this_week, num_this_week_lastweek)
+    contexts['week_yearOveryear_rate_warn'] = week_yearOveryear_rate_warn
+    contexts['week_weekOverweek_rate_warn'] = week_weekOverweek_rate_warn
+    contexts['num_this_week_warn'] = num_this_week
+    # 计算出周的同比增长率和环比增长率并保存到contexts字典中
+
+    return contexts
+
+
 def getWarnNums():
     """
     游客人数模块，得到历史游客人数
@@ -203,7 +299,7 @@ def getWarnNums():
     current_time = datetime.datetime.now()
     # 本周星期一，星期天
     monday, sunday = get_current_week()
-    query_time_monday, query_time_sunday = str(monday)[:19], str(sunday)[:19]
+    query_time_monday, query_time_sunday = str(monday)[:11], str(sunday)[:11]
     # 去年同日期
     monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
     query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:19], str(sunday_lastyear)[:19]
@@ -369,7 +465,7 @@ def meifeng(request):
     tourist_context = getScenicTouristNums(1)
     context.update(tourist_context)
     # 预警次数模块
-    warnnums_context = getWarnNums()
+    warnnums_context = getScenicWarntNums(1)
     context.update(warnnums_context)
     # 人数排行模块
     scenicrank_context = getScenicRank()
@@ -415,11 +511,11 @@ def getScenicHeartMapData(request):
         sceid = select_latest_nums['scenicid']
         cid = select_latest_nums['camid']
         # 获得最新数据的人数num，岛屿id，摄像头id以便查询该摄像头的经纬度
-        select_latest_point = Camera.objects.filter(scenicid=sceid, camid=cid).values("camlgn", "camlat")
+        select_latest_point = Camera.objects.filter(scenicid=sceid, camid=cid).values("camlng", "camlat")
         # 查询Camera表获得经纬度
         result_send = {};
         result_send["count"] = num
-        result_send["lng"] = select_latest_point[0]['camlgn']
+        result_send["lng"] = select_latest_point[0]['camlng']
         result_send["lat"] = select_latest_point[0]['camlat']
         # 按照热力图需要的数据格式存入字典
         result_latest.append(result_send)
