@@ -1,12 +1,13 @@
 import datetime, json, random, itertools
 import decimal
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.db import connection
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count, Min, Max, Sum
 
 
 def test(request):
@@ -97,6 +98,130 @@ def indexV0(request):
     return render(request, 'indexV0.html', context={'current_time': t})
 
 
+def getIntervalTouristNums(start, end, scenicid):
+    """
+    :param start:
+    :param end:
+    :return: 获得start-end时间端内某岛的人数
+    """
+    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year], \
+                                                   month__range=[start.month, end.month], \
+                                                   day__range=[start.day, end.day]).values("nums")
+    sum_ = 0
+    for r in nums_this_Interval:
+        sum_ += r['nums']
+    return sum_
+
+
+def getIntervalWarnNums(start, end, scenicid):
+    """
+
+    :param start:
+    :param end:
+    :param scenicid:
+    :return: 获得某岛的一段时间内的预警次数
+    """
+    start_str = str(start)[:10]
+    end = end + relativedelta(days=1)
+    end_str = str(end)[:10]
+
+    sum_ = 0
+    result = Recordwarnings.objects.filter(scenicid=scenicid, createat__gt=start_str, createat__lt=end_str)
+    for r in result:
+        sum_ += 1
+
+    return sum_
+
+
+def getYouNeedInterval():
+    """
+
+    :return:获得本周起始时间，上一周起始时间，去年的本周起始时间，
+            本月份起始时间，上一个月起始时间，去年本月起始时间
+    """
+    current_time = datetime.datetime.now()
+    month_today = current_time
+    month_start = current_time - relativedelta(days=current_time.day - 1)
+
+    month_start_lastyear, month_today_lastyear = month_start - relativedelta(years=1), month_today - relativedelta(
+        years=1)
+    month_start_lastmonth, month_today_lastmonth = month_start - relativedelta(months=1), month_today - relativedelta(
+        months=1)
+    # 获得本月的起始时间，去年的本月起始时间，上个月的起始时间
+
+    monday, sunday = get_current_week()
+    sunday = current_time
+    monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
+    monday_lastweek, sunday_lastweek = monday - relativedelta(days=7), sunday - relativedelta(days=7)
+
+    # 获得本周的起始时间，去年的本周起始时间，上周起始时间
+
+    return monday, sunday, monday_lastweek, sunday_lastweek, monday_lastyear, sunday_lastyear, \
+           month_start, month_today, month_start_lastmonth, month_today_lastmonth, month_start_lastyear, \
+           month_today_lastyear
+
+
+def getYearOverYearRate(nowDate, prevDate):
+    """
+
+    :param nowDate:
+    :param prevDate:
+    :return:返回同比增长率
+    """
+    return (nowDate - prevDate) / (nowDate + 1) * 100
+
+
+def getMonthOverMonthRate(nowDate, prevDate):
+    """
+
+    :param nowDate:
+    :param prevDate:
+    :return: 返回环比增长率
+    """
+    return (nowDate - prevDate) / (prevDate + 1) * 100
+
+
+def getScenicTouristNums(scenicid):
+    """
+
+    :param scenicid:
+    :return: 得到某岛旅客人数
+    """
+    contexts = {}
+
+    monday, sunday, monday_lastweek, sunday_lastweek, monday_lastyear, sunday_lastyear, \
+    month_start, month_today, month_start_lastmonth, month_today_lastmonth, month_start_lastyear, \
+    month_today_lastyear = getYouNeedInterval()
+
+    # 获得本周的起始时间，去年的本周起始时间，上周起始时间
+    # 本月份起始时间，上一个月起始时间，去年本月起始时间
+    num_this_month = getIntervalTouristNums(month_start, month_today, scenicid)
+    num_this_month_lastyear = getIntervalTouristNums(month_start_lastyear, month_today_lastyear, scenicid)
+    num_this_month_lastmonth = getIntervalTouristNums(month_start_lastmonth, month_today_lastmonth, scenicid)
+    # 通过getIntervalTouristNums获得本月份，去年本月份，上个月的游客人数
+
+    month_yearOveryear_rate = getYearOverYearRate(num_this_month, num_this_month_lastyear)
+    month_monthOvermonth_rate = getMonthOverMonthRate(num_this_month, num_this_month_lastmonth)
+    contexts['month_yearOveryear_rate'] = month_yearOveryear_rate
+    contexts['month_monthOvermonth_rate'] = month_monthOvermonth_rate
+    contexts['num_this_month'] = num_this_month
+    # 计算出月同比和环比增长率和环比率比保存到contexts中
+
+    num_this_week = getIntervalTouristNums(monday, sunday, scenicid)
+    num_this_week_lastyear = getIntervalTouristNums(monday_lastyear, sunday_lastyear, scenicid)
+    num_this_week_lastweek = getIntervalTouristNums(monday_lastweek, sunday_lastweek, scenicid)
+    # 通过getIntervalTouristNums获得本周，去年本周，上周的游客人数
+
+    week_yearOveryear_rate = getYearOverYearRate(num_this_week, num_this_week_lastyear)
+    week_weekOverweek_rate = getMonthOverMonthRate(num_this_week, num_this_week_lastweek)
+    contexts['week_yearOveryear_rate'] = week_yearOveryear_rate
+    contexts['week_weekOverweek_rate'] = week_weekOverweek_rate
+    contexts['num_this_week'] = num_this_week
+    # 计算出周的同比增长率和环比增长率并保存到contexts字典中
+
+    return contexts
+
+
 def getTouristNums():
     """
     游客人数模块，得到历史游客人数
@@ -139,6 +264,42 @@ def getTouristNums():
         context['rn_sum_month_growth'] = -(rn_sum_month - rn_sum_month_lastyear)
         context['rn_sum_month_rate'] = -(rn_sum_month - rn_sum_month_lastyear) / rn_sum_month * 100
     return context
+
+
+def getScenicWarntNums(scenicid):
+    contexts = {}
+
+    monday, sunday, monday_lastweek, sunday_lastweek, monday_lastyear, sunday_lastyear, \
+    month_start, month_today, month_start_lastmonth, month_today_lastmonth, month_start_lastyear, \
+    month_today_lastyear = getYouNeedInterval()
+    # 获得本周的起始时间，去年的本周起始时间，上周起始时间
+    # 本月份起始时间，上一个月起始时间，去年本月起始时间
+
+    num_this_month = getIntervalWarnNums(month_start, month_today, scenicid)
+    num_this_month_lastyear = getIntervalWarnNums(month_start_lastyear, month_today_lastyear, scenicid)
+    num_this_month_lastmonth = getIntervalWarnNums(month_start_lastmonth, month_today_lastmonth, scenicid)
+    # 通过getIntervalWarnNums获得本月份，去年本月份，上个月的预警次数
+
+    month_yearOveryear_rate_warn = getYearOverYearRate(num_this_month, num_this_month_lastyear)
+    month_monthOvermonth_rate_warn = getMonthOverMonthRate(num_this_month, num_this_month_lastmonth)
+    contexts['month_yearOveryear_rate_warn'] = month_yearOveryear_rate_warn
+    contexts['month_monthOvermonth_rate_warn'] = month_monthOvermonth_rate_warn
+    contexts['num_this_month_warn'] = num_this_month
+    # 计算出月同比和环比增长率和环比率比保存到contexts中
+
+    num_this_week = getIntervalWarnNums(monday, sunday, scenicid)
+    num_this_week_lastyear = getIntervalWarnNums(monday_lastyear, sunday_lastyear, scenicid)
+    num_this_week_lastweek = getIntervalWarnNums(monday_lastweek, sunday_lastweek, scenicid)
+    # 通过getIntervalWarnNums获得本周，去年本周，上周的游客人数
+
+    week_yearOveryear_rate_warn = getYearOverYearRate(num_this_week, num_this_week_lastyear)
+    week_weekOverweek_rate_warn = getMonthOverMonthRate(num_this_week, num_this_week_lastweek)
+    contexts['week_yearOveryear_rate_warn'] = week_yearOveryear_rate_warn
+    contexts['week_weekOverweek_rate_warn'] = week_weekOverweek_rate_warn
+    contexts['num_this_week_warn'] = num_this_week
+    # 计算出周的同比增长率和环比增长率并保存到contexts字典中
+
+    return contexts
 
 
 def getWarnNums():
@@ -271,6 +432,7 @@ def getHeatMapNums(request):
     # 人数记录表
     # query_time = str(datetime.datetime.now())[0:17] + ‘%’
     query_time = '2019-09-20 15:21%'
+
     with connection.cursor() as cursor:
         query = "SELECT recordnums.scenicId,recordnums.camId,SUM(nums) AS all_nums,camLng,camLat FROM recordnums,camera WHERE recordnums.camId = camera.camId AND recordnums.scenicId = camera.scenicId AND recordnums.createAt LIKE %s GROUP BY recordnums.scenicId,recordnums.camId"
         cursor.execute(query, [query_time])
@@ -285,6 +447,7 @@ def getHeatMapScenic(request):
     res_json = [{}]
     # query_time = str(datetime.datetime.now())[0:17] + ‘%’
     query_time = '2019-09-20 15:21%'
+
     with connection.cursor() as cursor:
         query = "SELECT scenic.scenicId,scenic.scenicName,SUM(nums) as nums,warning1Nums,warning2Nums,warning3Nums,lng,lat FROM scenic,recordnums " \
                 "WHERE scenic.scenicId = recordnums.scenicId AND createAt LIKE %s GROUP BY scenicId"
@@ -321,3 +484,73 @@ def index(request):
     curwarn_context = getCurrentWarn()
     context.update(curwarn_context)
     return render(request, 'index.html', context=context)
+
+
+def meifeng(request):
+    """
+    :param request:
+    :return: 返回梅峰岛景区信息
+    """
+    # 参数
+    context = {}
+    # 游客人数模块
+    tourist_context = getScenicTouristNums(1)
+    context.update(tourist_context)
+    # 预警次数模块
+    warnnums_context = getScenicWarntNums(1)
+    context.update(warnnums_context)
+    # 人数排行模块
+    scenicrank_context = getScenicRank()
+    context.update(scenicrank_context)
+    # 预警排行模块
+    warnrank_context = getWarnRank()
+    context.update(warnrank_context)
+    # 景区人数变化模块
+    numbar_context = getNumBar()
+    context.update(numbar_context)
+    # 当前预警信息模块
+    curwarn_context = getCurrentWarn()
+    context.update(curwarn_context)
+
+    return render(request, 'mf_scenic.html', context=context)
+
+
+def getScenicHeartMapData(request):
+    """
+
+    :param request:
+    :return:根据request中的scenicid返回对应岛屿的热度图
+    """
+    _scenicid = request.GET['_scenicid']  # 后台发送json请求时，附带上岛屿的编号
+    _scenicid = int(_scenicid)
+    result = Recordnums.objects.values("scenicid", "camid").annotate(latest=Max("id")).filter(scenicid=_scenicid)
+    # select scenicid,camid,Max('id') as latest from recordnums where scenucud=1 group by scenicid,camid
+    # 因为最新插入的数据id是肯定比之前的大的，所有我们先找到指定岛指定摄像头的数据的最大id
+
+    result_latest = []
+    # 存储某一个岛所有摄像头的最新数据
+    for i in result:
+        # i表示某一个摄像头的数据
+        latest_id = i['latest']
+        # latest_id 表示i这个摄像头的最新数据的id
+        # 字典的访问是i['latest']不是i.latest
+        select_latest_nums = Recordnums.objects.filter(id=latest_id).values("scenicid", "id", "camid",
+                                                                            "nums")
+        # 根据最新数据的id来查询Recordnums表，获得人数
+        select_latest_nums = select_latest_nums[0]
+        # 查询结果是一个list，即使结果只有一个，所以需要[0]
+        num = select_latest_nums['nums']
+        sceid = select_latest_nums['scenicid']
+        cid = select_latest_nums['camid']
+        # 获得最新数据的人数num，岛屿id，摄像头id以便查询该摄像头的经纬度
+        select_latest_point = Camera.objects.filter(scenicid=sceid, camid=cid).values("camlng", "camlat")
+        # 查询Camera表获得经纬度
+        result_send = {};
+        result_send["count"] = num
+        result_send["lng"] = select_latest_point[0]['camlng']
+        result_send["lat"] = select_latest_point[0]['camlat']
+        # 按照热力图需要的数据格式存入字典
+        result_latest.append(result_send)
+        # 将各个摄像头的数据存入result_latest
+
+    return JsonResponse(result_latest, safe=False, json_dumps_params={'ensure_ascii': False})

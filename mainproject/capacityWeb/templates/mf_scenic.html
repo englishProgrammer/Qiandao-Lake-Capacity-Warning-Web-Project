@@ -1,0 +1,42 @@
+{% extends 'father.html' %}
+
+{% block baiduimg %}
+    <script type="text/javascript">
+        var map = new BMap.Map("container-heatmap");
+        map.centerAndZoom(new BMap.Point(118.913861,29.591398), 16); //创建地图
+        map.addEventListener("click",function (e) {
+        alert(e.point.lng + "," + e.point.lat);
+        }); //获取点击出的pos,用来确定各个景区的具体位置
+        map.enableScrollWheelZoom(true); //允许滚轮滑动来放大缩小地图
+
+    map.addControl(new BMap.MapTypeControl(
+       {
+           mapTypes: [BMAP_NORMAL_MAP,BMAP_HYBRID_MAP],
+       }
+    )); //添加跟换地图类型的控件
+    var marker = new BMap.Marker(new BMap.Point(118.913861,29.591398));
+    map.addOverlay(marker); //添加一个小红点
+    marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
+    var content = '标注';
+    var info = new BMap.InfoWindow(content);
+    marker.addEventListener("click",function () {
+       this.openInfoWindow(info);
+    });           //点击时会出现提示信息
+
+    $(function () {
+       getHeatMapData()
+    }); //地图一加载就初始化热力图
+
+    heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":20});
+    map.addOverlay(heatmapOverlay);     //添加热力图到地图中，此时还没有热力图数据，不会显示出热力图
+    function getHeatMapData() {
+       $.get('/capacityWeb/getScenicHeartMapData/',{'_scenicid':1},function (msg) {
+           try {
+               heatmapOverlay.setDataSet({data:msg,max:100});
+           }catch (e) {
+               alert(e.message)
+           } //捕获失败原因
+       }); //发送ajax请求，从数据库中取出数据并更新热力图数据，此部分为复用部分
+    }
+    </script>
+{% endblock %}
