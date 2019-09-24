@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <link rel='stylesheet' href="{% static 'css/menu.css' %}">
     <link rel='stylesheet' href="{% static 'css/Bmap.selfdef.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
     <!-- JavaScript-->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -70,7 +71,7 @@
                         class="unit"> 人</span></div>
                 <div class="numdata-line data"><i class="fa fa-arrow-up"
                                                   aria-hidden="true"
-                                                  style="color: red"></i>{{ rn_sum_week_rate|floatformat:2}}<span
+                                                  style="color: red"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% else %}
                 <div class="numdata-line data"><i class="fa fa-arrow-down"
@@ -79,7 +80,7 @@
                         class="unit"> 人</span></div>
                 <div class="numdata-line data"><i class="fa fa-arrow-down"
                                                   aria-hidden="true"
-                                                  style="color: green"></i>{{ rn_sum_week_rate|floatformat:2}}<span
+                                                  style="color: green"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% endif %}
             <div class="numdata-line title">本月人数</div>
@@ -93,7 +94,7 @@
                         class="unit"> 人</span></div>
                 <div class="numdata-line data"><i class="fa fa-arrow-up"
                                                   aria-hidden="true"
-                                                  style="color: red"></i>{{ rn_sum_month_rate|floatformat:2}}<span
+                                                  style="color: red"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% else %}
                 <div class="numdata-line data"><i class="fa fa-arrow-down"
@@ -102,7 +103,7 @@
                         class="unit"> 人</span></div>
                 <div class="numdata-line data"><i class="fa fa-arrow-down"
                                                   aria-hidden="true"
-                                                  style="color: green"></i>{{ rn_sum_month_rate|floatformat:2}}<span
+                                                  style="color: green"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% endif %}
         </div>
@@ -136,7 +137,7 @@
                         class="unit"> 次</span></div>
                 <div class="warndata-line data"><i class="fa fa-arrow-up"
                                                    aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_week_rate|floatformat:2}}<span
+                                                   style="color: red"></i>{{ rw_count_week_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% else %}
                 <div class="warndata-line data"><i class="fa fa-arrow-down"
@@ -145,7 +146,7 @@
                         class="unit"> 次</span></div>
                 <div class="warndata-line data"><i class="fa fa-arrow-down"
                                                    aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_week_rate|floatformat:2}}<span
+                                                   style="color: green"></i>{{ rw_count_week_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% endif %}
             <div class="warndata-line title">本月预警次数</div>
@@ -159,7 +160,7 @@
                         class="unit"> 次</span></div>
                 <div class="warndata-line data"><i class="fa fa-arrow-up"
                                                    aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_month_rate|floatformat:2}}<span
+                                                   style="color: red"></i>{{ rw_count_month_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% else %}
                 <div class="warndata-line data"><i class="fa fa-arrow-down"
@@ -168,7 +169,7 @@
                         class="unit"> 次</span></div>
                 <div class="warndata-line data"><i class="fa fa-arrow-down"
                                                    aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_month_rate|floatformat:2}}<span
+                                                   style="color: green"></i>{{ rw_count_month_rate|floatformat:2 }}<span
                         class="unit"> %</span></div>
             {% endif %}
         </div>
