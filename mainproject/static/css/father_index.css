@@ -1,0 +1,269 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'SimHei', "Microsoft YaHei", monospace;
+    background-image: url("../img/lake3.jpg");
+    background-size: 100% 100%;
+}
+
+.header {
+    height: 60px;
+    width: 100%;
+}
+
+.header-title {
+    background-color: #21798d;
+    font-size: 20px;
+    color: white;
+    text-align: left;
+    width: 45%;
+    height: 100%;
+    line-height: 60px;
+    margin: 0;
+    letter-spacing: 1px;
+    float: left;
+}
+
+.img-logo {
+    width: 5%;
+    height: 100%;
+    float: left;
+    background-color: #21798d;
+}
+
+.img-logo > img {
+    float: left;
+    height: 100%;
+}
+
+.header-navbar {
+    width: 50%;
+    height: 100%;
+    float: left;
+    background-color: #21798d;
+    color: white;
+}
+
+.header-navbar {
+    color: white;
+}
+
+/* 最外层的div */
+.container-main {
+    width: 100%;
+    height: 700px;
+}
+
+/* 一个模块的div */
+.container-block {
+    border: 2px solid #c3c3c3;
+    margin: 0.8%;
+    background: white;
+    position: absolute;
+}
+
+#heatmap {
+    width: 50.8%;
+    height: 52.5%;
+    top: 7.8%;
+    left: 23.8%;
+}
+
+#numdata {
+    width: 23.6%;
+    height: 23.5%;
+    top: 7.8%;
+    left: 0;
+}
+
+#warndata {
+    width: 23.6%;
+    height: 23.5%;
+    top: 7.8%;
+    right: 0;
+}
+
+#current-warning {
+    width: 23.6%;
+    height: 28.8%;
+    top: 31.6%;
+    left: 0;
+}
+
+#scenicrank_week {
+    width: 23.6%;
+    height: 35.8%;
+    bottom: 0;
+    left: 0;
+}
+
+#numbar {
+    width: 50.8%;
+    height: 35.8%;
+    bottom: 0;
+    left: 23.8%;
+}
+
+#piedata {
+    width: 23.6%;
+    height: 28.8%;
+    top: 31.5%;
+    right: 0;
+}
+
+/*#current-warning {*/
+/*    width: 23.6%;*/
+/*    height: 35.8%;*/
+/*    bottom: 0;*/
+/*    right: 0;*/
+/*}*/
+
+#scenicrank_month{
+    width: 23.6%;
+    height: 35.8%;
+    bottom: 0;
+    right: 0;
+}
+
+/* 模块头的div */
+.container-header {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px dashed lightgray;
+}
+
+.container-title {
+    float: left;
+    width: 70%;
+    font-size: 15px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.container-tag {
+    text-align: center;
+    float: right;
+    width: 20%;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #2e6da4;
+    color: white;
+    margin: 10px 20px 10px 0;
+}
+
+.container-tag:hover {
+    color: white;
+}
+
+/* 模块内容的div */
+.container-content {
+    width: 100%;
+    height: 80%;
+}
+
+#heatmap > .container-content {
+    height: 90%;
+}
+
+/* .numdata */
+.numdata-line {
+    width: 100%;
+}
+
+#container-numdata {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    grid-template-rows: repeat(4, 20% 30%);
+    text-align: center;
+}
+
+#container-numdata > .title {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+#container-numdata > .data {
+    font-size: 18px;
+    line-height: 30px;
+}
+
+.numdata-line > .unit {
+    font-size: 12px;
+}
+
+.numdata-line > .fa {
+    margin-right: 2px;
+}
+
+/* .warndata */
+.warndata-line {
+    width: 100%;
+}
+
+#container-warndata {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    grid-template-rows: repeat(4, 20% 30%);
+    text-align: center;
+}
+
+#container-warndata > .title {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+#container-warndata > .data {
+    font-size: 18px;
+    line-height: 30px;
+}
+
+.warndata-line > .unit {
+    font-size: 12px;
+}
+
+.warndata-line > .fa {
+    margin-right: 2px;
+}
+
+#container-scenicrank {
+    font-weight: bold;
+}
+
+#container-warnrank {
+    font-weight: bold;
+}
+
+#piedata > .container-content {
+    width: 50%;
+    float: left;
+}
+
+.content-curwarn {
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 3px;
+}
+
+.piedata-title {
+    width: 50%;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    float: left;
+    font-weight: bold;
+}
+
+select, option {
+    text-align: center;
+    text-align-last: center;
+}

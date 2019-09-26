@@ -4,6 +4,7 @@ from capacityWeb import views
 urlpatterns = [
     path('index/', views.index),
     path('meifeng/', views.meifeng),
-    path('getScenicWarntNums/', views.getScenicWarntNums),
+    path('updatetodayTouristNums/', views.updatetodayTouristNums),
     path('getScenicHeartMapData/', views.getScenicHeartMapData)
+
 ]

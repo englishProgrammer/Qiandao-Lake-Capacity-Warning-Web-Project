@@ -3,28 +3,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>千岛湖旅游景区承载量预警-景区信息</title>
+    <title>{{ NAME }}旅游景区承载量预警</title>
 
     <!-- StyleSheet -->
     <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/father_index.css' %}">
     <link rel='stylesheet' href="{% static 'css/menu.css' %}">
     <!-- JavaScript-->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui.min.js' %}"></script>
-    <script src="{% static 'js/amcharts.js' %}"></script>
+    <script src="{% static 'js/echarts.min.js' %}"></script>
     <script src="{% static 'js/serial.js' %}"></script>
     <script src="{% static 'js/pie.js' %}"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+<style>
+    .img-logo > img{
+        width: 100%;
+    }
+</style>
 </head>
 <body>
 <div class="header">
-    <div class="img-logo"><img src="{% static 'img/logo.jpg' %}" alt="logo"></div>
-    <div class="header-title">千岛湖旅游景区承载量预警平台</div>
+    <div class="img-logo"><img src="{% static 'img/logo_mf.jpg' %}" alt="logo"></div>
+    <div class="header-title">{{ NAME }}--旅游景区承载量预警平台</div>
     <div class="header-navbar">
         <ul class="menu boxed clearfix">
             <li><a href="#"><i class="fa fa-home"></i>主页</a></li>
@@ -223,7 +228,7 @@
             <!--显示本月环比变化率-->
         </div>
     </div>
-    <div class="container-block" id="scenicrank">
+    <div class="container-block" id="scenicrank_month">
         <div class="container-header">
             <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
             <div class="container-tag">本月</div>
@@ -232,10 +237,11 @@
 
         </div>
     </div>
-    <div class="container-block" id="warnrank">
+
+    <div class="container-block" id="scenicrank_week">
         <div class="container-header">
-            <div class="container-title"><i class="fa fa-list-ul"></i> 预警次数排行</div>
-            <div class="container-tag">本月</div>
+            <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+            <div class="container-tag">本周</div>
         </div>
         <div class="container-content" id="container-warnrank">
 
@@ -244,7 +250,7 @@
     <div class="container-block" id="numbar">
         <div class="container-header">
             <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
-            <div class="container-tag">历史数据</div>
+            <div class="container-tag">一小时内</div>
         </div>
         <div class="container-content" id="container-numbar">
 
@@ -278,270 +284,296 @@
         </div>
     </div>
 </div>
-
-{% block baiduimg %}
-<script type="text/javascript">
-    // 百度地图API功能
-    var map = new BMap.Map("container-heatmap");    // 创建Map实例
-    map.centerAndZoom(new BMap.Point(119.018693, 29.600992), 12);  // 初始化地图,设置中心点坐标和地图级别
-    //添加地图类型控件
-    map.addControl(new BMap.MapTypeControl({
-        mapTypes: [
-            BMAP_NORMAL_MAP,
-            BMAP_HYBRID_MAP
-        ]
-    }));
-    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
-    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-
-    function addMarker(point) {
-        var marker = new BMap.Marker(point);
-        map.addOverlay(marker);
-    }
-
-    // 坐标点
-    $.ajax({
-        url: '/getHeatMapPoints/',
-        type: 'POST',
-        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
-        async: true,
-        success: function (arg) {
-            // 若调用成功，向地图添加标记
-            var obj = jQuery.parseJSON(arg)[0];
-            scenic_points_obj = obj['scenic_data'];
-            for (var i = 0; i < scenic_points_obj.length; i++) {
-                var point = new BMap.Point(scenic_points_obj[i].fields.lgn, scenic_points_obj[i].fields.lat
-                    )
-                ;
-                addMarker(point);
-            }
-            cam_points_obj = obj['rn_data'];
-            var points = [];
-            for (i = 0; i < cam_points_obj.length; i++) {
-                points.push({
-                    'lng': cam_points_obj[i].camLgn,
-                    'lat': cam_points_obj[i].camLat,
-                    'count': cam_points_obj[i].all_nums
-                })
-            }
-            heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-            map.addOverlay(heatmapOverlay);
-            heatmapOverlay.setDataSet({data: points, max: 100});
-            heatmapOverlay.show();
-        }
-    });
-</script>
-{% endblock %}
-
-<script type="text/javascript">
-    var chart;
-    var chartData1 = {{ scenicrank_data }};
-
-    AmCharts.ready(function () {
-        // SERIAL CHART
-        chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData1;
-        chart.categoryField = "scenic";
-        chart.startDuration = 1;
-        chart.rotate = true;
-        chart.marginTop = 2;
-        chart.marginLeft = 0;
-        chart.fontSize = 14;
-
-        // AXES
-        // category
-        var categoryAxis = chart.categoryAxis;
-        categoryAxis.gridPosition = "start";
-        categoryAxis.axisColor = "#c3c3c3";
-        categoryAxis.dashLength = 3;
-        categoryAxis.fontSize = 12;
-
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.dashLength = 3;
-        valueAxis.axisAlpha = 0.2;
-        valueAxis.position = "bottom";
-        valueAxis.minorGridEnabled = true;
-        valueAxis.minorGridAlpha = 0.08;
-        valueAxis.gridAlpha = 0.15;
-        valueAxis.fontSize = 10;
-        chart.addValueAxis(valueAxis);
-
-        // GRAPHS
-        // column graph
-        var graph1 = new AmCharts.AmGraph();
-        graph1.type = "column";
-        graph1.title = "人数";
-        graph1.valueField = "nums";
-        graph1.lineAlpha = 0;
-        graph1.fillColors = "#607fd9";
-        graph1.fillAlphas = 0.8;
-        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
-        chart.addGraph(graph1);
-
-        // WRITE
-        chart.write("container-scenicrank");
-    });
-</script>
-<script type="text/javascript">
-    var chart;
-
-    var chartData2 = {{ warnrank_data }};
-    AmCharts.ready(function () {
-        // SERIAL CHART
-        chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData2;
-        chart.categoryField = "scenic";
-        chart.startDuration = 1;
-        chart.rotate = true;
-        chart.marginTop = 2;
-        chart.marginLeft = 0;
-        chart.fontSize = 14;
-
-        // AXES
-        // category
-        var categoryAxis = chart.categoryAxis;
-        categoryAxis.gridPosition = "start";
-        categoryAxis.axisColor = "#c3c3c3";
-        categoryAxis.dashLength = 3;
-        categoryAxis.fontSize = 12;
-
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.dashLength = 3;
-        valueAxis.axisAlpha = 0.2;
-        valueAxis.position = "bottom";
-        valueAxis.minorGridEnabled = true;
-        valueAxis.minorGridAlpha = 0.08;
-        valueAxis.gridAlpha = 0.15;
-        valueAxis.fontSize = 10;
-        chart.addValueAxis(valueAxis);
-
-        // GRAPHS
-        // column graph
-        var graph1 = new AmCharts.AmGraph();
-        graph1.type = "column";
-        graph1.title = "预警次数";
-        graph1.valueField = "times";
-        graph1.lineAlpha = 0;
-        graph1.fillColors = "#d92202";
-        graph1.fillAlphas = 0.8;
-        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
-        chart.addGraph(graph1);
-
-        // WRITE
-        chart.write("container-warnrank");
-    });
-</script>
-<script type="text/javascript">
-    var chart;
-    var chartData3 = {{ numbar_data }};
-
-
-    AmCharts.ready(function () {
-        // SERIAL CHART
-        chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData3;
-        chart.categoryField = "date";
-        chart.startDuration = 1;
-
-        chart.handDrawn = true;
-        chart.handDrawnScatter = 3;
-
-        // AXES
-        // category
-        var categoryAxis = chart.categoryAxis;
-        categoryAxis.gridPosition = "start";
-
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.axisAlpha = 0;
-        chart.addValueAxis(valueAxis);
-
-        // GRAPHS
-        // column graph
-        var graph1 = new AmCharts.AmGraph();
-        graph1.type = "column";
-        graph1.title = "今年人数";
-        graph1.lineColor = "#00d570";
-        graph1.valueField = "nums";
-        graph1.lineAlpha = 1;
-        graph1.fillAlphas = 1;
-        graph1.dashLengthField = "dashLengthColumn";
-        graph1.alphaField = "alpha";
-        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
-        chart.addGraph(graph1);
-
-        // line
-        var graph2 = new AmCharts.AmGraph();
-        graph2.type = "line";
-        graph2.title = "去年人数";
-        graph2.lineColor = "#fcd202";
-        graph2.valueField = "nums_lastyear";
-        graph2.lineThickness = 3;
-        graph2.bullet = "round";
-        graph2.bulletBorderThickness = 3;
-        graph2.bulletBorderColor = "#fcd202";
-        graph2.bulletBorderAlpha = 1;
-        graph2.bulletColor = "#ffffff";
-        graph2.dashLengthField = "dashLengthLine";
-        graph2.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
-        chart.addGraph(graph2);
-
-        // LEGEND
-        var legend = new AmCharts.AmLegend();
-        legend.useGraphSettings = true;
-        legend.position = 'top';
-        chart.addLegend(legend);
-
-        // WRITE
-        chart.write("container-numbar");
-    });
-</script>
-<script type="text/javascript">
-    var chart;
-    var legend;
-
-    var chartData4 = {{ scenicrank_data }};
-
-    AmCharts.ready(function () {
-        // PIE CHART
-        chart = new AmCharts.AmPieChart();
-        chart.dataProvider = chartData4;
-        chart.titleField = "scenic";
-        chart.valueField = "nums";
-        chart.outlineColor = "#FFFFFF";
-        chart.outlineAlpha = 0.8;
-        chart.outlineThickness = 2;
-        chart.labelsEnabled = false;
-        chart.pieX = '50%';
-        chart.pieY = '30%';
-        // LEGEND
-        // WRITE
-        chart.write("container-piedata1");
-    });
-</script>
-<script type="text/javascript">
-    var chart;
-    var legend;
-
-    var chartData5 = {{ warnrank_data }};
-
-    AmCharts.ready(function () {
-        // PIE CHART
-        chart = new AmCharts.AmPieChart();
-        chart.dataProvider = chartData5;
-        chart.titleField = "scenic";
-        chart.valueField = "times";
-        chart.outlineColor = "#FFFFFF";
-        chart.outlineAlpha = 0.8;
-        chart.outlineThickness = 2;
-        chart.labelsEnabled = false;
-        chart.pieX = '50%';
-        chart.pieY = '30%';
-        // WRITE
-        chart.write("container-piedata2");
-    });
-</script>
 </body>
 </html>
+{% block baiduimg %}
+    <script type="text/javascript">
+        var map = new BMap.Map("container-heatmap");
+        map.centerAndZoom(new BMap.Point(118.913861,29.591398), 16); //创建地图
+        map.addEventListener("click",function (e) {
+        alert(e.point.lng + "," + e.point.lat);
+        }); //获取点击出的pos,用来确定各个景区的具体位置
+        map.enableScrollWheelZoom(true); //允许滚轮滑动来放大缩小地图
+
+    map.addControl(new BMap.MapTypeControl(
+       {
+           mapTypes: [BMAP_NORMAL_MAP,BMAP_HYBRID_MAP],
+       }
+    )); //添加跟换地图类型的控件
+    var marker = new BMap.Marker(new BMap.Point(118.913861,29.591398));
+    map.addOverlay(marker); //添加一个小红点
+    marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
+    var content = '标注';
+    var info = new BMap.InfoWindow(content);
+    marker.addEventListener("click",function () {
+       this.openInfoWindow(info);
+    });           //点击时会出现提示信息
+
+    $(function () {
+       getHeatMapData()
+    }); //地图一加载就初始化热力图
+
+    heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":20});
+    map.addOverlay(heatmapOverlay);     //添加热力图到地图中，此时还没有热力图数据，不会显示出热力图
+    function getHeatMapData() {
+       $.get('/capacityWeb/getScenicHeartMapData/',{'_scenicid':1},function (msg) {
+           try {
+               heatmapOverlay.setDataSet({data:msg,max:100});
+           }catch (e) {
+               alert(e.message)
+           } //捕获失败原因
+       }); //发送ajax请求，从数据库中取出数据并更新热力图数据，此部分为复用部分
+    }
+    </script>
+{% endblock %}
+<script type="text/javascript">
+    try {
+var myChart = echarts.init(document.getElementById('container-scenicrank'));
+var option = {
+    tooltip:{
+        trigger: 'axis',
+        axisPointer:{type:'line'}
+    },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
+    yAxis:{
+      type: 'category',
+        <!--设置y轴为类型轴-->
+      data:{{ place_month_rank | safe }},
+        <!--设置类型数据，在这里是各个地点。-->
+        axisTick: {
+          inside:false,
+            alignWithLabel:true,
+            lineStyle: {
+              color: '#c3c3c3',
+            },
+        },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
+        axisLine:{
+          lineStyle:{
+              color:'#c3c3c3',
+          },
+        },<!--设置y轴的轴线：灰色-->
+        axisLabel:{
+            fontWeight:'bold',
+            color:'#000',
+        }, <!--设置y上的label：黑色粗体-->
+    }, <!--设置y轴的属性-->
+    xAxis:{
+        type:'value',
+        <!--设置x轴为value轴-->
+        show:true,
+        splitNumber:5,
+        splitLine:{
+            lineStyle:{
+                type:'dotted',
+            },
+        },
+        <!--设置x轴的分割线：虚线-->
+        axisLine:{
+          lineStyle:{
+              color:'#c3c3c3',
+              type:'dotted',
+          },
+        },
+        <!--设置x轴的轴线：灰色虚线-->
+        axisLabel: {
+            fontWeight: 'bold',
+            color:'#000',
+        },
+        <!--设置x轴上显示的标签：黑色粗体-->
+        axisTick:{
+            color:'#c3c3c3',
+        },
+        <!--设置x轴上的‘突出物’：灰色对齐-->
+    },
+    grid:{
+        show: false,
+        top:'1%',
+        bottom: '1%',
+        left:'1%',
+        right:'5%',
+        <!--这里的top,bottom,left,right相当于margin-->
+        containLabel:true,
+        <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
+    },
+    series:[
+        {
+            name:'人数',
+            type:'bar',
+            data:{{ nums_month_rank }},
+            label:{   <!--在柱状图上显示数字，有点丑不显示为好-->
+                show:false,
+                position:'insideTop',
+                rotate:20,
+                color:'#eee',
+            },
+            itemStyle:{
+                color:'#E14E35',
+            }
+        }
+    ]
+};
+myChart.setOption(option)
+    }catch (e) {
+        alert(e.message)
+    }
+
+</script>
+
+<script type="text/javascript">
+    try {
+var myChart = echarts.init(document.getElementById('container-warnrank'));
+var option = {
+    tooltip:{
+        trigger: 'axis',
+        axisPointer:{type:'line'}
+    },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
+    yAxis:{
+      type: 'category',
+        <!--设置y轴为类型轴-->
+      data:{{ place_week_rank | safe }},
+        <!--设置类型数据，在这里是各个地点。-->
+        axisTick: {
+          inside:false,
+            alignWithLabel:true,
+            lineStyle: {
+              color: '#c3c3c3',
+            },
+        },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
+        axisLine:{
+          lineStyle:{
+              color:'#c3c3c3',
+          },
+        },<!--设置y轴的轴线：灰色-->
+        axisLabel:{
+            fontWeight:'bold',
+            color:'#000',
+        }, <!--设置y上的label：黑色粗体-->
+    }, <!--设置y轴的属性-->
+    xAxis:{
+        type:'value',
+        <!--设置x轴为value轴-->
+        boundaryGap: true,
+        show:true,
+        splitNumber:5,
+        splitLine:{
+            lineStyle:{
+                type:'dotted',
+            },
+        },
+        <!--设置x轴的分割线：虚线-->
+        axisLine:{
+          lineStyle:{
+              color:'#c3c3c3',
+              type:'dotted',
+          },
+        },
+        <!--设置x轴的轴线：灰色虚线-->
+        axisLabel: {
+            fontWeight: 'bold',
+            color:'#000',
+        },
+        <!--设置x轴上显示的标签：黑色粗体-->
+        axisTick:{
+            color:'#c3c3c3',
+        },
+        <!--设置x轴上的‘突出物’：灰色对齐-->
+    },
+    grid:{
+        show: false,
+        top:'1%',
+        bottom: '1%',
+        left:'1%',
+        right:'5%',
+        <!--这里的top,bottom,left,right相当于margin-->
+        containLabel:true,
+        <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
+    },
+    series:[
+        {
+            name:'人数',
+            type:'bar',
+            data:{{ nums_week_rank }},
+            label:{   <!--在柱状图上显示数字，有点丑不显示为好-->
+                show:false,
+                position:'insideTop',
+                rotate:20,
+                color:'#eee',
+            },
+            itemStyle:{
+                color:'#8099E1',
+            }
+        }
+    ]
+};
+myChart.setOption(option)
+    }catch (e) {
+        alert(e.message)
+    }
+
+</script>
+
+<script type="text/javascript">
+        try {
+            var myChart = echarts.init(document.getElementById('container-numbar'));//定义折线图显示的位置对象
+            var datas = {{ start_data }},
+            option = {
+                    tooltip: {
+                    trigger: 'axis',
+                    },
+                xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    axisLabel:{
+                      interale:0,
+                      rotate: -20,
+                      margin:15,
+                        fontWeight:'bold',
+                      formatter: function (value) {
+                          var t_date = new Date(value);
+                          return [t_date.getMonth()+1, t_date.getDate()].join('-')+" "
+                          + [t_date.getHours(), t_date.getMinutes()].join(':');
+                      }
+                    },
+                },
+                yAxis: {
+                    type: 'value',
+                    boundaryGap: [0, '100%'],
+                    splitLine: {
+                        show: true
+                    },
+                    axisLabel:{
+                        fontWeight:'bold',
+                    },
+                },
+                grid:{
+                    bottom: '15%',
+                    top: '5%',
+                },
+                series: [{
+                    name: '游客人数',
+                    type: 'line',
+                    showSymbol: false,
+                    hoverAnimation: false,
+                    data: datas
+                }]
+            };
+            myChart.setOption(option);
+            setInterval(function () {
+                $.get('/capacityWeb/updatetodayTouristNums/',{'scenicid':1},function (msg) {
+                    datas.length = 0;
+                    datas = msg;
+                    myChart.setOption({
+                        series: [{
+                            data: datas
+                        }]
+                    })
+                })
+            },60000)
+        }catch (e) {
+            alert(e.message)
+        }
+
+
+</script>
+
