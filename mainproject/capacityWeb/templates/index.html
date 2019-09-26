@@ -68,189 +68,194 @@
         </div>
     </div>
 </nav>
-<div class="container-main">
-    <div class="container-block" id="numdata">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
-            <div class="container-tag">历史数据</div>
-        </div>
-        <div class="container-content" id="container-numdata">
-            <div class="numdata-line title">本周人数</div>
-            <div class="numdata-line title">同比变化量</div>
-            <div class="numdata-line title">同比变化率</div>
-            <div class="numdata-line data">{{ rn_sum_week }}<span class="unit"> 人</span></div>
-            {% if rn_sum_week_growth > 0 %}
-                <div class="numdata-line data"><i class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>{{ rn_sum_week_growth }}<span
-                        class="unit"> 人</span></div>
-                <div class="numdata-line data"><i class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% else %}
-                <div class="numdata-line data"><i class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>{{ rn_sum_week_growth }}<span
-                        class="unit"> 人</span></div>
-                <div class="numdata-line data"><i class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <div class="numdata-line title">本月人数</div>
-            <div class="numdata-line title">同比变化量</div>
-            <div class="numdata-line title">同比变化率</div>
-            <div class="numdata-line data">{{ rn_sum_month }}<span class="unit"> 人</span></div>
-            {% if rn_sum_month_growth >= 0 %}
-                <div class="numdata-line data"><i class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>{{ rn_sum_month_growth }}<span
-                        class="unit"> 人</span></div>
-                <div class="numdata-line data"><i class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% else %}
-                <div class="numdata-line data"><i class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>{{ rn_sum_month_growth }}<span
-                        class="unit"> 人</span></div>
-                <div class="numdata-line data"><i class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="container-block" id="heatmap">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
-            <select class="container-tag" onchange="heatmap_onchange()" id="heatmap_selected">
-                <option class="container-tag" value="1">模式一 : 游客人数</option>
-                <option class="container-tag" value="2" selected>模式二 : 景区承载力</option>
-            </select>
-        </div>
-        <div class="container-content" id="container-heatmap">
-
-        </div>
-    </div>
-    <div class="container-block" id="warndata">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
-            <div class="container-tag">历史数据</div>
-        </div>
-        <div class="container-content" id="container-warndata">
-            <div class="warndata-line title">本周预警次数</div>
-            <div class="warndata-line title">同比变化量</div>
-            <div class="warndata-line title">同比变化率</div>
-            <div class="warndata-line data">{{ rw_count_week }}<span class="unit"> 次</span></div>
-            {% if rw_count_week_growth >= 0 %}
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_week_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_week_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% else %}
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_week_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_week_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <div class="warndata-line title">本月预警次数</div>
-            <div class="warndata-line title">同比变化量</div>
-            <div class="warndata-line title">同比变化率</div>
-            <div class="warndata-line data">{{ rw_count_month }}<span class="unit"> 次</span></div>
-            {% if rw_count_month_growth > 0 %}
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_month_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-up"
-                                                   aria-hidden="true"
-                                                   style="color: red"></i>{{ rw_count_month_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% else %}
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_month_growth }}<span
-                        class="unit"> 次</span></div>
-                <div class="warndata-line data"><i class="fa fa-arrow-down"
-                                                   aria-hidden="true"
-                                                   style="color: green"></i>{{ rw_count_month_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="container-block" id="scenicrank">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
-            <div class="container-tag">本月</div>
-        </div>
-        <div class="container-content" id="container-scenicrank">
-
-        </div>
-    </div>
-    <div class="container-block" id="warnrank">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-list-ul"></i> 预警次数排行</div>
-            <div class="container-tag">本月</div>
-        </div>
-        <div class="container-content" id="container-warnrank">
-
-        </div>
-    </div>
-    <div class="container-block" id="numbar">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
-            <div class="container-tag">历史数据</div>
-        </div>
-        <div class="container-content" id="container-numbar">
-
-        </div>
-    </div>
-    <div class="container-block" id="piedata">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
-            <div class="container-tag">本月</div>
-        </div>
-        <div class="piedata-title">游客人数</div>
-        <div class="piedata-title">景区预警</div>
-        <div class="container-content" id="container-piedata1"></div>
-        <div class="container-content" id="container-piedata2"></div>
-    </div>
-    <div class="container-block" id="current-warning">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
-            <div class="container-tag">当前情况</div>
-        </div>
-        <div class="container-content" id="container-warning">
-            {% for item in curwarn %}
-                {% if item.type == 1 and item.level == 1 %}
-                    <div class="content-curwarn"
-                         style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
-                    </div>
-                {% elif item.type == 1 and item.level == 2 %}
-                    <div class="content-curwarn"
-                         style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警
-                    </div>
-                {% elif item.type == 1 and item.level == 3 %}
-                    <div class="content-curwarn"
-                         style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警
-                    </div>
+<div class="container-fluid container-main">
+    <div class="col-md-3 col-sm-12" id="col1">
+        <div class="container-block col-md-12" id="numdata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numdata">
+                <div class="numdata-line title">本周人数</div>
+                <div class="numdata-line title">同比变化量</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line data">{{ rn_sum_week }}<span class="unit"> 人</span></div>
+                {% if rn_sum_week_growth > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_week_growth }}<span
+                            class="unit"> 人</span></div>
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_week_growth }}<span
+                            class="unit"> 人</span></div>
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_week_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
                 {% endif %}
-            {% endfor %}
+                <div class="numdata-line title">本月人数</div>
+                <div class="numdata-line title">同比变化量</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line data">{{ rn_sum_month }}<span class="unit"> 人</span></div>
+                {% if rn_sum_month_growth >= 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_month_growth }}<span
+                            class="unit"> 人</span></div>
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_month_growth }}<span
+                            class="unit"> 人</span></div>
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_month_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="scenicrank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="container-content" id="container-scenicrank">
+
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="warnrank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 预警次数排行</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="container-content" id="container-warnrank">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6  col-sm-12" id="col2">
+        <div class="container-block col-md-12" id="heatmap">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
+                <select class="container-tag" onchange="heatmap_onchange()" id="heatmap_selected">
+                    <option class="container-tag" value="1">模式一 : 游客人数</option>
+                    <option class="container-tag" value="2" selected>模式二 : 景区承载力</option>
+                </select>
+            </div>
+            <div class="container-content" id="container-heatmap">
+
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="numbar">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numbar">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-12" id="col3">
+        <div class="container-block col-md-12" id="warndata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-warndata">
+                <div class="warndata-line title">本周预警次数</div>
+                <div class="warndata-line title">同比变化量</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line data">{{ rw_count_week }}<span class="unit"> 次</span></div>
+                {% if rw_count_week_growth >= 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_week_growth }}<span
+                            class="unit"> 次</span></div>
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_week_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_week_growth }}<span
+                            class="unit"> 次</span></div>
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_week_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                <div class="warndata-line title">本月预警次数</div>
+                <div class="warndata-line title">同比变化量</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line data">{{ rw_count_month }}<span class="unit"> 次</span></div>
+                {% if rw_count_month_growth > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_month_growth }}<span
+                            class="unit"> 次</span></div>
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_month_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_month_growth }}<span
+                            class="unit"> 次</span></div>
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_month_rate|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="piedata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="piedata-title">游客人数</div>
+            <div class="piedata-title">景区预警</div>
+            <div class="container-content" id="container-piedata1"></div>
+            <div class="container-content" id="container-piedata2"></div>
+        </div>
+        <div class="container-block col-md-12" id="current-warning">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
+                <div class="container-tag">当前情况</div>
+            </div>
+            <div class="container-content" id="container-warning">
+                {% for item in curwarn %}
+                    {% if item.type == 1 and item.level == 1 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 2 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 3 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
-
 <script src="{% static 'js/baidu-map-flashMarker.js' %}"></script>
 <script type="text/javascript">
     // 百度地图API功能

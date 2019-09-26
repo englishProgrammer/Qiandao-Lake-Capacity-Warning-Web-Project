@@ -7,7 +7,7 @@ from django.db import connection
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count, Min, Max, Sum
+from django.db.models import Max
 
 
 def test(request):
@@ -89,14 +89,6 @@ def get_current_week():
 
 # Create your views here.
 
-def indexV0(request):
-    """
-    跳转至 indexV0.html
-    """
-    # 获取时间
-    t = datetime.datetime.now()
-    return render(request, 'indexV0.html', context={'current_time': t})
-
 
 def getIntervalTouristNums(start, end, scenicid):
     """
@@ -104,8 +96,8 @@ def getIntervalTouristNums(start, end, scenicid):
     :param end:
     :return: 获得start-end时间端内某岛的人数
     """
-    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year], \
-                                                   month__range=[start.month, end.month], \
+    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year],
+                                                   month__range=[start.month, end.month],
                                                    day__range=[start.day, end.day]).values("nums")
     sum_ = 0
     for r in nums_this_Interval:
@@ -545,7 +537,7 @@ def getScenicHeartMapData(request):
         # 获得最新数据的人数num，岛屿id，摄像头id以便查询该摄像头的经纬度
         select_latest_point = Camera.objects.filter(scenicid=sceid, camid=cid).values("camlng", "camlat")
         # 查询Camera表获得经纬度
-        result_send = {};
+        result_send = {}
         result_send["count"] = num
         result_send["lng"] = select_latest_point[0]['camlng']
         result_send["lat"] = select_latest_point[0]['camlat']

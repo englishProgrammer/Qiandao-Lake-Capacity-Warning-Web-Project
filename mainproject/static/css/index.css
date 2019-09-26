@@ -10,6 +10,7 @@ html, body {
     background-color: #21798d;
     border-color: #20accb;
     z-index: 10;
+    margin-bottom: 5px;
 }
 
 .navbar-default .navbar-brand {
@@ -162,72 +163,59 @@ html, body {
 /* 最外层的div */
 .container-main {
     width: 100%;
-    height: 700px;
+    height: 88%;
+    padding: 0;
 }
 
 /* 一个模块的div */
 .container-block {
     border: 2px solid #c3c3c3;
-    margin: 0.8%;
+    margin: 2px;
     background: white;
-    position: absolute;
     z-index: 1;
+    padding: 0 5px 0 5px;
+}
+
+#col1, #col2, #col3 {
+    height: 100%;
+    padding: 5px 2px 0 2px;
 }
 
 #heatmap {
-    width: 50.8%;
-    height: 52.5%;
-    top: 7.8%;
-    left: 23.8%;
+    height: 60%;
 }
 
 #numdata {
-    width: 23.6%;
-    height: 23.5%;
-    top: 7.8%;
-    left: 0;
+    height: 27%;
 }
 
 #warndata {
-    width: 23.6%;
-    height: 23.5%;
-    top: 7.8%;
-    right: 0;
+    height: 27%;
 }
 
 #scenicrank {
-    width: 23.6%;
-    height: 32.3%;
-    top: 31.6%;
-    left: 0;
+    height: 37%;
 }
 
 #warnrank {
-    width: 23.6%;
-    height: 32.3%;
-    bottom: 0;
-    left: 0;
+    height: 37%;
 }
 
 #numbar {
-    width: 50.8%;
-    height: 35.8%;
-    bottom: 0;
-    left: 23.8%;
+    height: 42%;
 }
 
 #piedata {
-    width: 23.6%;
-    height: 28.8%;
-    top: 31.5%;
-    right: 0;
+    height: 34%;
 }
 
 #current-warning {
-    width: 23.6%;
-    height: 35.8%;
-    bottom: 0;
-    right: 0;
+    height: 40%;
+    overflow-y: scroll;
+}
+
+#current-warning::-webkit-scrollbar {
+    display: none
 }
 
 /* 模块头的div */
@@ -288,12 +276,12 @@ html, body {
 #container-numdata > .title {
     font-size: 14px;
     font-weight: bold;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 #container-numdata > .data {
     font-size: 18px;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 .numdata-line > .unit {
@@ -319,12 +307,12 @@ html, body {
 #container-warndata > .title {
     font-size: 14px;
     font-weight: bold;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 #container-warndata > .data {
     font-size: 18px;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 .warndata-line > .unit {
@@ -349,6 +337,7 @@ html, body {
 }
 
 .content-curwarn {
+    float: left;
     width: 100%;
     height: 20px;
     line-height: 20px;
