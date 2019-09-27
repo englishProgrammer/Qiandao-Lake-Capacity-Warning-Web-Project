@@ -203,7 +203,7 @@
         <div class="container-block col-md-12" id="numbar">
             <div class="container-header">
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
-                <div class="container-tag">历史数据</div>
+                <div class="container-tag">一小时内</div>
             </div>
             <div class="container-content" id="container-numbar">
 
@@ -551,10 +551,13 @@ myChart.setOption(option)
                     splitLine: {
                         show: true
                     },
+                    splitArea:{
+                        show: true,
+                    },
                     axisLabel:{
                       interale:0,
-                      rotate: -20,
-                      margin:15,
+                      rotate: 0,
+                      margin:8,
                         fontWeight:'bold',
                       formatter: function (value) {
                           var t_date = new Date(value);
@@ -567,15 +570,20 @@ myChart.setOption(option)
                     type: 'value',
                     boundaryGap: [0, '100%'],
                     splitLine: {
-                        show: true
+                        show: true,
                     },
                     axisLabel:{
                         fontWeight:'bold',
                     },
+                    splitArea: {
+                        show:false,
+                    },
+
                 },
                 grid:{
-                    bottom: '15%',
+                    bottom: '8%',
                     top: '5%',
+                    right: '5%',
                 },
                 series: [{
                     name: '游客人数',
@@ -603,4 +611,5 @@ myChart.setOption(option)
 
 
 </script>
+
 
