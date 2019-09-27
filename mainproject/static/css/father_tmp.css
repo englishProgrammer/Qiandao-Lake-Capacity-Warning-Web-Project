@@ -194,12 +194,11 @@ html, body {
 }
 
 #nowwarning {
-    height: 32.7%;
-    overflow-y: scroll;
+    height: 37%;
 }
 
 #numsMonthRank {
-    height: 42%;
+    height: 37%;
 }
 
 #numbar {
@@ -207,16 +206,11 @@ html, body {
 }
 
 #piedata {
-    height: 32.7%;
+    height: 37%;
 }
 
 #numsWeekRank {
-    height: 42%;
-
-}
-
-#numsWeekRank::-webkit-scrollbar {
-    display: none
+    height: 37%;
 }
 
 /* 模块头的div */
@@ -277,16 +271,16 @@ html, body {
 #container-numdata > .title {
     font-size: 14px;
     font-weight: bold;
-    line-height: 25px;
+    line-height: 30px;
 }
 
 #container-numdata > .data {
     font-size: 18px;
-    line-height: 25px;
+    line-height: 30px;
 }
 
 .numdata-line > .unit {
-    font-size: 18px;
+    font-size: 12px;
 }
 
 .numdata-line > .fa {
@@ -308,12 +302,12 @@ html, body {
 #container-warndata > .title {
     font-size: 14px;
     font-weight: bold;
-    line-height: 25px;
+    line-height: 30px;
 }
 
 #container-warndata > .data {
     font-size: 18px;
-    line-height: 25px;
+    line-height: 30px;
 }
 
 .warndata-line > .unit {
@@ -338,7 +332,6 @@ html, body {
 }
 
 .content-curwarn {
-    float: left;
     width: 100%;
     height: 20px;
     line-height: 20px;

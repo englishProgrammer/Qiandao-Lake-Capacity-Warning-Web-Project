@@ -27,42 +27,59 @@
 </style>
 </head>
 <body>
-<div class="header">
-    <div class="img-logo"><img src="{% static 'img/logo_mf.jpg' %}" alt="logo"></div>
-    <div class="header-title">{{ NAME }}--旅游景区承载量预警平台</div>
-    <div class="header-navbar">
-        <ul class="menu boxed clearfix">
-            <li><a href="#"><i class="fa fa-home"></i>主页</a></li>
-            <li>
-                <a href="#"><i class="fa fa-star"></i>景区详情</a>
-                <ul>
-                    <li><a href="#"><i class="fa fa-star"></i>景区详情1</a></li>
-                    <li><a href="#"><i class="fa fa-star"></i>景区详情2</a></li>
-                    <li><a href="#"><i class="fa fa-star"></i>景区详情3</a></li>
-                </ul>
-            </li>
-            <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
-            <li>
-                <a href="#"><i class="fa fa-video-camera"></i>监控</a>
-                <ul>
-                    <li><a href="#"><i class="fa fa-video-camera"></i>监控1</a></li>
-                    <li><a href="#"><i class="fa fa-video-camera"></i>监控2</a></li>
-                    <li><a href="#"><i class="fa fa-video-camera"></i>监控3</a></li>
-                </ul>
-            </li>
-            <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
-            <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
-        </ul>
-    </div>
-</div>
-<div class="container-main">
-
-    <div class="container-block" id="numdata">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
-            <div class="container-tag">历史数据</div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#mynavbar">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖旅游景区承载量预警平台</a>
         </div>
-        <div class="container-content" id="container-numdata">
+        <div class="collapse navbar-collapse navbar-right" id="mynavbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#"><i class="fa fa-home"></i>主页</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-star"></i>景区详情<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="fa fa-star"></i>景区1详情</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-star"></i>景区2详情</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-star"></i>景区3详情</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
+                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid container-main">
+    <div class="col-md-3 col-sm-12" id="col1">
+        <div class="container-block col-md-12" id="numdata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numdata">
             <div class="numdata-line title">本周人数</div>
             <div class="numdata-line title">同比变化率</div>
             <div class="numdata-line title">环比变化率</div>
@@ -138,22 +155,68 @@
             {% endif %}
             <!--显示本月环比变化率-->
         </div>
+        </div>
+        <div class="container-block col-md-12" id="nowwarning">
+
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
+                <div class="container-tag">当前情况</div>
+            </div>
+            <div class="container-content" id="container-nowwarning">
+                    {% for item in curwarn %}
+                    {% if item.type == 1 and item.level == 1 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 2 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 3 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="numsMonthRank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="container-content" id="container-numsMonthRank">
+
+            </div>
+        </div>
     </div>
-    <div class="container-block" id="heatmap">
-        <div class="container-header">
+    <div class="col-md-6  col-sm-12" id="col2">
+        <div class="container-block col-md-12" id="heatmap">
+            <div class="container-header">
             <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
             <div class="container-tag">当前情况</div>
         </div>
-        <div class="container-content" id="container-heatmap">
+            <div class="container-content" id="container-heatmap">
 
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="numbar">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numbar">
+
+            </div>
         </div>
     </div>
-    <div class="container-block" id="warndata">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
-            <div class="container-tag">历史数据</div>
-        </div>
-        <div class="container-content" id="container-warndata">
+    <div class="col-md-3 col-sm-12" id="col3">
+        <div class="container-block col-md-12" id="warndata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-warndata">
             <div class="warndata-line title">本周预警次数</div>
             <div class="warndata-line title">同比变化率</div>
             <div class="warndata-line title">环比变化率</div>
@@ -227,63 +290,28 @@
             {% endif %}
             <!--显示本月环比变化率-->
         </div>
-    </div>
-    <div class="container-block" id="scenicrank_month">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
-            <div class="container-tag">本月</div>
         </div>
-        <div class="container-content" id="container-scenicrank">
-
+        <div class="container-block col-md-12" id="piedata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="piedata-title">游客人数</div>
+            <div class="piedata-title">景区预警</div>
+            <div class="container-content" id="container-piedata1"></div>
+            <div class="container-content" id="container-piedata2"></div>
         </div>
-    </div>
-
-    <div class="container-block" id="scenicrank_week">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
-            <div class="container-tag">本周</div>
-        </div>
-        <div class="container-content" id="container-warnrank">
-
-        </div>
-    </div>
-    <div class="container-block" id="numbar">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
-            <div class="container-tag">一小时内</div>
-        </div>
-        <div class="container-content" id="container-numbar">
-
-        </div>
-    </div>
-    <div class="container-block" id="piedata">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
-            <div class="container-tag">本月</div>
-        </div>
-        <div class="piedata-title">游客人数</div>
-        <div class="piedata-title">景区预警</div>
-        <div class="container-content" id="container-piedata1"></div>
-        <div class="container-content" id="container-piedata2"></div>
-    </div>
-    <div class="container-block" id="current-warning">
-        <div class="container-header">
-            <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
-            <div class="container-tag">当前情况</div>
-        </div>
-        <div class="container-content" id="container-warning">
-            {% for item in curwarn %}
-                {% if item.type == 1 and item.level == 1 %}
-                <div class="content-curwarn" style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
-                {% elif item.type == 1 and item.level == 2 %}
-                <div class="content-curwarn" style="background-color: #ffa300;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
-                {% elif item.type == 1 and item.level == 3 %}
-                <div class="content-curwarn" style="background-color: #53abff;">{{ item.scenicName }}-{{ item.level }}级承载量预警</div>
-                {% endif %}
-            {% endfor %}
+        <div class="container-block col-md-12" id="numsWeekRank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+                <div class="container-tag">本周</div>
+            </div>
+            <div class="container-content" id="container-numsWeekRank">
+            </div>
         </div>
     </div>
 </div>
+
 </body>
 </html>
 {% block baiduimg %}
@@ -328,7 +356,7 @@
 {% endblock %}
 <script type="text/javascript">
     try {
-var myChart = echarts.init(document.getElementById('container-scenicrank'));
+var myChart = echarts.init(document.getElementById('container-numsMonthRank'));
 var option = {
     tooltip:{
         trigger: 'axis',
@@ -389,7 +417,7 @@ var option = {
         top:'1%',
         bottom: '1%',
         left:'1%',
-        right:'5%',
+        right:'7%',
         <!--这里的top,bottom,left,right相当于margin-->
         containLabel:true,
         <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
@@ -417,10 +445,9 @@ myChart.setOption(option)
     }
 
 </script>
-
 <script type="text/javascript">
     try {
-var myChart = echarts.init(document.getElementById('container-warnrank'));
+var myChart = echarts.init(document.getElementById('container-numsWeekRank'));
 var option = {
     tooltip:{
         trigger: 'axis',
@@ -482,7 +509,7 @@ var option = {
         top:'1%',
         bottom: '1%',
         left:'1%',
-        right:'5%',
+        right:'7%',
         <!--这里的top,bottom,left,right相当于margin-->
         containLabel:true,
         <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->

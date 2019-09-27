@@ -20,15 +20,13 @@ from capacityWeb import views as capViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # capacityWEB's URL
+    # capacityWEB's TEMPLATE URL
     url(r'^index/', capViews.index),
-    url(r'^indexV0/', capViews.indexV0),
     url(r'^test/', capViews.test),
-
-
-    path('capacityWeb/', include('capacityWeb.urls')),  # 设置二级路由，请保留this code
-
+    # VIEWS URL
     url(r'^getHeatMapNums/', capViews.getHeatMapNums),
     url(r'^getHeatMapScenic/', capViews.getHeatMapScenic),
+    # 设置二级路由，请保留
+    path('capacityWeb/', include('capacityWeb.urls')),
 
 ]

@@ -8,7 +8,7 @@ from django.db import connection
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count, Min, Max, Sum
+from django.db.models import Max,Sum
 
 
 def test(request):
@@ -50,14 +50,6 @@ def get_current_week():
 
 # Create your views here.
 
-def indexV0(request):
-    """
-    跳转至 indexV0.html
-    """
-    # 获取时间
-    t = datetime.datetime.now()
-    return render(request, 'indexV0.html', context={'current_time': t})
-
 
 def getIntervalTouristNums(start, end, scenicid):
     """
@@ -65,8 +57,8 @@ def getIntervalTouristNums(start, end, scenicid):
     :param end:
     :return: 获得start-end时间端内某岛的人数
     """
-    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year], \
-                                                   month__range=[start.month, end.month], \
+    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year],
+                                                   month__range=[start.month, end.month],
                                                    day__range=[start.day, end.day]).values("nums")
     sum_ = 0
     for r in nums_this_Interval:
@@ -350,8 +342,7 @@ def getScenicPlaceRank(scenicid_):
     # 获得本月起始时间与当前时间的字符串形式
 
     result = Recordnums.objects.filter(scenicid=scenicid_, createat__gt=month_start_str,
-                                       createat__lt=month_end_str).values('camid').annotate(
-        sun_num=Sum("nums")).order_by('sun_num')
+                                       createat__lt=month_end_str).values('camid').annotate(sun_num=Sum("nums")).order_by('sun_num')
     # 获得代号为scenicid_岛的各个摄像头的本月人流量
 
     tourist_num = []
@@ -564,7 +555,7 @@ def getScenicHeartMapData(request):
         # 获得最新数据的人数num，岛屿id，摄像头id以便查询该摄像头的经纬度
         select_latest_point = Camera.objects.filter(scenicid=sceid, camid=cid).values("camlng", "camlat")
         # 查询Camera表获得经纬度
-        result_send = {};
+        result_send = {}
         result_send["count"] = num
         result_send["lng"] = select_latest_point[0]['camlng']
         result_send["lat"] = select_latest_point[0]['camlat']
@@ -586,7 +577,7 @@ def getTodayIntervalTouristNums(scenicid_=1):
 
     :return: 返回当前时间到1小时前的间隔内的数据
     """
-    today_now = datetime.datetime.now()
+    today_now = datetime.datetime.now() - relativedelta(days=1)  # 改
     today_start = today_now - relativedelta(minutes=60)
     today_start_str = str(today_start)[:19]
     today_now_str = str(today_now)[:19]
