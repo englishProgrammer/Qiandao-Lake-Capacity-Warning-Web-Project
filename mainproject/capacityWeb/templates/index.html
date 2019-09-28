@@ -276,7 +276,7 @@
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
 
-    function addOverHandler(name, content, marker, bounce = 1) {
+    function addOverHandler(id, name, content, marker, bounce = 1) {
         var info_window = {
             width: 200,     // 信息窗口宽度
             height: 60,     // 信息窗口高度
@@ -295,7 +295,25 @@
         );
         marker.addEventListener("mouseout", function (e) {
                 map.closeInfoWindow(); //关闭信息窗口
-
+            }
+        );
+        marker.addEventListener("click", function (e) {
+                if (id == 1)
+                    window.location.href = "{% url '[capacityWeb]:meifeng' %}";
+                else if (id == 2)
+                    window.location.href = "{% url '[capacityWeb]:huangshanjian' %}";
+                else if (id == 3)
+                    window.location.href = "{% url '[capacityWeb]:tianchi' %}";
+                else if (id == 4)
+                    window.location.href = "{% url '[capacityWeb]:yueguang' %}";
+                else if (id == 5)
+                    window.location.href = "{% url '[capacityWeb]:longsha' %}";
+                else if (id == 6)
+                    window.location.href = "{% url '[capacityWeb]:yule' %}";
+                else if (id == 7)
+                    window.location.href = "{% url '[capacityWeb]:guihua' %}";
+                else if (id == 8)
+                    window.location.href = "{% url '[capacityWeb]:mishan' %}";
             }
         );
     }
@@ -336,7 +354,7 @@
                     var point = new BMap.Point(scenic_points_obj[i].fields.lng, scenic_points_obj[i].fields.lat); // 坐标点
                     var marker = new BMap.Marker(point); // 标注物
                     map.addOverlay(marker);
-                    addOverHandler(scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
+                    addOverHandler(i + 1, scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
                 }
                 heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
                 map.addOverlay(heatmapOverlay);
@@ -388,7 +406,7 @@
                         city['speed'] = 0.5;
                         city['status'] = '爆满';
                     }
-                    addOverHandler(rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
+                    addOverHandler(i + 1, rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
                     map.addOverlay(marker);
                     citys.push(city);
                 }
@@ -414,166 +432,160 @@
     var chart;
     var chartData1 = {{ scenicrank_data }};
 
-    AmCharts.ready(function () {
-        // SERIAL CHART
-        chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData1;
-        chart.categoryField = "scenic";
-        chart.startDuration = 1;
-        chart.rotate = true;
-        chart.marginTop = 2;
-        chart.marginLeft = 0;
-        chart.fontSize = 14;
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData1;
+    chart.categoryField = "scenic";
+    chart.startDuration = 1;
+    chart.rotate = true;
+    chart.marginTop = 2;
+    chart.marginLeft = 0;
+    chart.fontSize = 14;
 
-        // AXES
-        // category
-        var categoryAxis = chart.categoryAxis;
-        categoryAxis.gridPosition = "start";
-        categoryAxis.axisColor = "#c3c3c3";
-        categoryAxis.dashLength = 3;
-        categoryAxis.fontSize = 12;
+    // AXES
+    // category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridPosition = "start";
+    categoryAxis.axisColor = "#c3c3c3";
+    categoryAxis.dashLength = 3;
+    categoryAxis.fontSize = 12;
 
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.dashLength = 3;
-        valueAxis.axisAlpha = 0.2;
-        valueAxis.position = "bottom";
-        valueAxis.minorGridEnabled = true;
-        valueAxis.minorGridAlpha = 0.08;
-        valueAxis.gridAlpha = 0.15;
-        valueAxis.fontSize = 10;
-        chart.addValueAxis(valueAxis);
+    // value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.dashLength = 3;
+    valueAxis.axisAlpha = 0.2;
+    valueAxis.position = "bottom";
+    valueAxis.minorGridEnabled = true;
+    valueAxis.minorGridAlpha = 0.08;
+    valueAxis.gridAlpha = 0.15;
+    valueAxis.fontSize = 10;
+    chart.addValueAxis(valueAxis);
 
-        // GRAPHS
-        // column graph
-        var graph1 = new AmCharts.AmGraph();
-        graph1.type = "column";
-        graph1.title = "人数";
-        graph1.valueField = "nums";
-        graph1.lineAlpha = 0;
-        graph1.fillColors = "#607fd9";
-        graph1.fillAlphas = 0.8;
-        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
-        chart.addGraph(graph1);
+    // GRAPHS
+    // column graph
+    var graph1 = new AmCharts.AmGraph();
+    graph1.type = "column";
+    graph1.title = "人数";
+    graph1.valueField = "nums";
+    graph1.lineAlpha = 0;
+    graph1.fillColors = "#607fd9";
+    graph1.fillAlphas = 0.8;
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
+    chart.addGraph(graph1);
 
-        // WRITE
-        chart.write("container-scenicrank");
-    });
+    // WRITE
+    chart.write("container-scenicrank");
 </script>
 <script type="text/javascript">
     var chart;
 
     var chartData2 = {{ warnrank_data }};
-    AmCharts.ready(function () {
-        // SERIAL CHART
-        chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData2;
-        chart.categoryField = "scenic";
-        chart.startDuration = 1;
-        chart.rotate = true;
-        chart.marginTop = 2;
-        chart.marginLeft = 0;
-        chart.fontSize = 14;
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData2;
+    chart.categoryField = "scenic";
+    chart.startDuration = 1;
+    chart.rotate = true;
+    chart.marginTop = 2;
+    chart.marginLeft = 0;
+    chart.fontSize = 14;
 
-        // AXES
-        // category
-        var categoryAxis = chart.categoryAxis;
-        categoryAxis.gridPosition = "start";
-        categoryAxis.axisColor = "#c3c3c3";
-        categoryAxis.dashLength = 3;
-        categoryAxis.fontSize = 12;
+    // AXES
+    // category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridPosition = "start";
+    categoryAxis.axisColor = "#c3c3c3";
+    categoryAxis.dashLength = 3;
+    categoryAxis.fontSize = 12;
 
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.dashLength = 3;
-        valueAxis.axisAlpha = 0.2;
-        valueAxis.position = "bottom";
-        valueAxis.minorGridEnabled = true;
-        valueAxis.minorGridAlpha = 0.08;
-        valueAxis.gridAlpha = 0.15;
-        valueAxis.fontSize = 10;
-        chart.addValueAxis(valueAxis);
+    // value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.dashLength = 3;
+    valueAxis.axisAlpha = 0.2;
+    valueAxis.position = "bottom";
+    valueAxis.minorGridEnabled = true;
+    valueAxis.minorGridAlpha = 0.08;
+    valueAxis.gridAlpha = 0.15;
+    valueAxis.fontSize = 10;
+    chart.addValueAxis(valueAxis);
 
-        // GRAPHS
-        // column graph
-        var graph1 = new AmCharts.AmGraph();
-        graph1.type = "column";
-        graph1.title = "预警次数";
-        graph1.valueField = "times";
-        graph1.lineAlpha = 0;
-        graph1.fillColors = "#d92202";
-        graph1.fillAlphas = 0.8;
-        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
-        chart.addGraph(graph1);
+    // GRAPHS
+    // column graph
+    var graph1 = new AmCharts.AmGraph();
+    graph1.type = "column";
+    graph1.title = "预警次数";
+    graph1.valueField = "times";
+    graph1.lineAlpha = 0;
+    graph1.fillColors = "#d92202";
+    graph1.fillAlphas = 0.8;
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b></span>";
+    chart.addGraph(graph1);
 
-        // WRITE
-        chart.write("container-warnrank");
-    });
+    // WRITE
+    chart.write("container-warnrank");
 </script>
 <script type="text/javascript">
     var chart;
     var chartData3 = {{ numbar_data }};
 
 
-    AmCharts.ready(function () {
-        // SERIAL CHART
-        chart = new AmCharts.AmSerialChart();
-        chart.dataProvider = chartData3.reverse();
-        chart.categoryField = "date";
-        chart.startDuration = 1;
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData3.reverse();
+    chart.categoryField = "date";
+    chart.startDuration = 1;
 
-        chart.handDrawn = true;
-        chart.handDrawnScatter = 3;
+    chart.handDrawn = true;
+    chart.handDrawnScatter = 3;
 
-        // AXES
-        // category
-        var categoryAxis = chart.categoryAxis;
-        categoryAxis.gridPosition = "start";
+    // AXES
+    // category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridPosition = "start";
 
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.axisAlpha = 0;
-        chart.addValueAxis(valueAxis);
+    // value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.axisAlpha = 0;
+    chart.addValueAxis(valueAxis);
 
-        // GRAPHS
-        // column graph
-        var graph1 = new AmCharts.AmGraph();
-        graph1.type = "column";
-        graph1.title = "今年人数";
-        graph1.lineColor = "#00d570";
-        graph1.valueField = "nums";
-        graph1.lineAlpha = 1;
-        graph1.fillAlphas = 1;
-        graph1.dashLengthField = "dashLengthColumn";
-        graph1.alphaField = "alpha";
-        graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
-        chart.addGraph(graph1);
+    // GRAPHS
+    // column graph
+    var graph1 = new AmCharts.AmGraph();
+    graph1.type = "column";
+    graph1.title = "今年人数";
+    graph1.lineColor = "#00d570";
+    graph1.valueField = "nums";
+    graph1.lineAlpha = 1;
+    graph1.fillAlphas = 1;
+    graph1.dashLengthField = "dashLengthColumn";
+    graph1.alphaField = "alpha";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
+    chart.addGraph(graph1);
 
-        // line
-        var graph2 = new AmCharts.AmGraph();
-        graph2.type = "line";
-        graph2.title = "去年人数";
-        graph2.lineColor = "#fcd202";
-        graph2.valueField = "nums_lastyear";
-        graph2.lineThickness = 3;
-        graph2.bullet = "round";
-        graph2.bulletBorderThickness = 3;
-        graph2.bulletBorderColor = "#fcd202";
-        graph2.bulletBorderAlpha = 1;
-        graph2.bulletColor = "#ffffff";
-        graph2.dashLengthField = "dashLengthLine";
-        graph2.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
-        chart.addGraph(graph2);
+    // line
+    var graph2 = new AmCharts.AmGraph();
+    graph2.type = "line";
+    graph2.title = "去年人数";
+    graph2.lineColor = "#fcd202";
+    graph2.valueField = "nums_lastyear";
+    graph2.lineThickness = 3;
+    graph2.bullet = "round";
+    graph2.bulletBorderThickness = 3;
+    graph2.bulletBorderColor = "#fcd202";
+    graph2.bulletBorderAlpha = 1;
+    graph2.bulletColor = "#ffffff";
+    graph2.dashLengthField = "dashLengthLine";
+    graph2.balloonText = "<span style='font-size:13px;'>[[title]] in [[category]]:<b>[[value]]</b> [[additional]]</span>";
+    chart.addGraph(graph2);
 
-        // LEGEND
-        var legend = new AmCharts.AmLegend();
-        legend.useGraphSettings = true;
-        legend.position = 'top';
-        chart.addLegend(legend);
+    // LEGEND
+    var legend = new AmCharts.AmLegend();
+    legend.useGraphSettings = true;
+    legend.position = 'top';
+    chart.addLegend(legend);
 
-        // WRITE
-        chart.write("container-numbar");
-    });
+    // WRITE
+    chart.write("container-numbar");
 </script>
 <script type="text/javascript">
     var chart;
@@ -581,22 +593,20 @@
 
     var chartData4 = {{ scenicrank_data }};
 
-    AmCharts.ready(function () {
-        // PIE CHART
-        chart = new AmCharts.AmPieChart();
-        chart.dataProvider = chartData4;
-        chart.titleField = "scenic";
-        chart.valueField = "nums";
-        chart.outlineColor = "#FFFFFF";
-        chart.outlineAlpha = 0.8;
-        chart.outlineThickness = 2;
-        chart.labelsEnabled = false;
-        chart.pieX = '50%';
-        chart.pieY = '30%';
-        // LEGEND
-        // WRITE
-        chart.write("container-piedata1");
-    });
+    // PIE CHART
+    chart = new AmCharts.AmPieChart();
+    chart.dataProvider = chartData4;
+    chart.titleField = "scenic";
+    chart.valueField = "nums";
+    chart.outlineColor = "#FFFFFF";
+    chart.outlineAlpha = 0.8;
+    chart.outlineThickness = 2;
+    chart.labelsEnabled = false;
+    chart.pieX = '50%';
+    chart.pieY = '30%';
+    // LEGEND
+    // WRITE
+    chart.write("container-piedata1");
 </script>
 <script type="text/javascript">
     var chart;
@@ -604,21 +614,19 @@
 
     var chartData5 = {{ warnrank_data }};
 
-    AmCharts.ready(function () {
-        // PIE CHART
-        chart = new AmCharts.AmPieChart();
-        chart.dataProvider = chartData5;
-        chart.titleField = "scenic";
-        chart.valueField = "times";
-        chart.outlineColor = "#FFFFFF";
-        chart.outlineAlpha = 0.8;
-        chart.outlineThickness = 2;
-        chart.labelsEnabled = false;
-        chart.pieX = '50%';
-        chart.pieY = '30%';
-        // WRITE
-        chart.write("container-piedata2");
-    });
+    // PIE CHART
+    chart = new AmCharts.AmPieChart();
+    chart.dataProvider = chartData5;
+    chart.titleField = "scenic";
+    chart.valueField = "times";
+    chart.outlineColor = "#FFFFFF";
+    chart.outlineAlpha = 0.8;
+    chart.outlineThickness = 2;
+    chart.labelsEnabled = false;
+    chart.pieX = '50%';
+    chart.pieY = '30%';
+    // WRITE
+    chart.write("container-piedata2");
 </script>
 <script>
     $('li').click(function () {
