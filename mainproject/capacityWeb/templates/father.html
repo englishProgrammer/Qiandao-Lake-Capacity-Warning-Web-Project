@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/father_index.css' %}">
     <link rel='stylesheet' href="{% static 'css/menu.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
     <!-- JavaScript-->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -37,21 +38,31 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖旅游景区承载量预警平台</a>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">{{ NAME }}旅游景区承载量预警平台</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#"><i class="fa fa-home"></i>主页</a></li>
+                <li class="active"><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
                             class="fa fa-star"></i>景区详情<span
                             class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-star"></i>景区1详情</a></li>
+                        <li><a href="{% url 'capacityWeb:meifeng' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-star"></i>景区2详情</a></li>
+                        <li><a href="{% url 'capacityWeb:huangshanjian' %}"><i class="fa fa-star"></i>黄山尖</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-star"></i>景区3详情</a></li>
+                        <li><a href="{% url '[capacityWeb]:tianchi' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yueguang' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:longsha' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>挂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
                     </ul>
                 </li>
                 <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
@@ -293,11 +304,11 @@
         </div>
         <div class="container-block col-md-12" id="piedata">
             <div class="container-header">
-                <div class="container-title"><i class="fa fa-pie-chart"></i>游客人数与预警分布</div>
-                <div class="container-tag">本月</div>
+                <div class="container-title"><i class="fa fa-pie-chart"></i>各月份游客人数分布</div>
+                <div class="container-tag">历史数据</div>
             </div>
-            <div class="piedata-title">游客人数</div>
-            <div class="piedata-title">景区预警</div>
+            <div class="piedata-title">今年</div>
+            <div class="piedata-title">去年</div>
             <div class="container-content" id="container-piedata1"></div>
             <div class="container-content" id="container-piedata2"></div>
         </div>
@@ -317,7 +328,7 @@
 {% block baiduimg %}
     <script type="text/javascript">
         var map = new BMap.Map("container-heatmap");
-        map.centerAndZoom(new BMap.Point(118.913861,29.591398), 16); //创建地图
+        map.centerAndZoom(new BMap.Point({{ scenic_lng }},{{ scenic_lat }}), 16); //创建地图
         map.addEventListener("click",function (e) {
         alert(e.point.lng + "," + e.point.lat);
         }); //获取点击出的pos,用来确定各个景区的具体位置
@@ -328,7 +339,7 @@
            mapTypes: [BMAP_NORMAL_MAP,BMAP_HYBRID_MAP],
        }
     )); //添加跟换地图类型的控件
-    var marker = new BMap.Marker(new BMap.Point(118.913861,29.591398));
+    var marker = new BMap.Marker(new BMap.Point({{ scenic_lng }},{{ scenic_lat }}));
     map.addOverlay(marker); //添加一个小红点
     marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
     var content = '标注';
@@ -344,7 +355,8 @@
     heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":20});
     map.addOverlay(heatmapOverlay);     //添加热力图到地图中，此时还没有热力图数据，不会显示出热力图
     function getHeatMapData() {
-       $.get('/capacityWeb/getScenicHeartMapData/',{'_scenicid':1},function (msg) {
+        id = {{ scenic_id }}
+       $.get('/capacityWeb/getScenicHeartMapData/',{'_scenicid':id},function (msg) {
            try {
                heatmapOverlay.setDataSet({data:msg,max:100});
            }catch (e) {
@@ -595,7 +607,8 @@ myChart.setOption(option)
             };
             myChart.setOption(option);
             setInterval(function () {
-                $.get('/capacityWeb/updatetodayTouristNums/',{'scenicid':1},function (msg) {
+                var id = {{ scenic_id }}
+                $.get('/capacityWeb/updatetodayTouristNums/',{'scenicid':id},function (msg) {
                     datas.length = 0;
                     datas = msg;
                     myChart.setOption({
@@ -611,5 +624,72 @@ myChart.setOption(option)
 
 
 </script>
+<script type="text/javascript">
+    try {
+        myChart2 = echarts.init(document.getElementById('container-piedata1'))
+        option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}月份 : {c} ({d}%)"
+            },
+            calculable : true,
+            series: [
+                {
+                    name: '游客人数',
+                    type: 'pie',
+                    radius: [0,70],
+                    center:['50%','42%'],
 
+                    label: {
+                        normal:{
+                          show: false
+                        },
+                        emphasis:{
+                            show:false
+                        }
+                    },
+
+                    data: {{ distribute_thisYear | safe }}
+                },
+            ]
+        };
+        myChart2.setOption(option)
+    }catch (e) {
+        alert(e.message)
+    }
+</script>
+
+<script>
+    try {
+        myChart3 = echarts.init(document.getElementById('container-piedata2'));
+        option ={
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
+            },
+          series: [
+              {
+                  name: '游客人数',
+                  type: 'pie',
+                  radius:[0,70],
+                  center:['50%','42%'],
+
+                  label:{
+                      normal:{
+                          show:false,
+                      },
+                      emphasis:{
+                          show:false,
+                      },
+                  },
+                  data: {{ distribute_lastYear | safe }}
+
+              }
+          ]
+        };
+        myChart3.setOption(option)
+    }catch (e) {
+        alert(e.message)
+    }
+</script>
 

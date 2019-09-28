@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^getHeatMapNums/', capViews.getHeatMapNums),
     url(r'^getHeatMapScenic/', capViews.getHeatMapScenic),
     # 设置二级路由，请保留
-    path('capacityWeb/', include('capacityWeb.urls')),
+    path('capacityWeb/', include('capacityWeb.urls', namespace='capacityWeb')),
 
 ]
