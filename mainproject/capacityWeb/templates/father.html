@@ -3,13 +3,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ NAME }}旅游景区承载量预警</title>
+    <title>千岛湖旅游景区承载量预警</title>
 
     <!-- StyleSheet -->
     <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/father_index.css' %}">
-    <link rel='stylesheet' href="{% static 'css/menu.css' %}">
     <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
     <!-- JavaScript-->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
@@ -21,11 +20,11 @@
     <script type="text/javascript"
             src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
-<style>
-    .img-logo > img{
-        width: 100%;
-    }
-</style>
+    <style>
+        .img-logo > img {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-default" role="navigation">
@@ -38,12 +37,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">{{ NAME }}旅游景区承载量预警平台</a>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖旅游景区承载量预警平台</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
-                <li class="dropdown">
+                <li><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
                             class="fa fa-star"></i>景区详情<span
                             class="caret"></span></a>
@@ -91,81 +90,81 @@
                 <div class="container-tag">历史数据</div>
             </div>
             <div class="container-content" id="container-numdata">
-            <div class="numdata-line title">本周人数</div>
-            <div class="numdata-line title">同比变化率</div>
-            <div class="numdata-line title">环比变化率</div>
-            <div class="numdata-line data">{{ num_this_week }}<span class="unit"> 人</span></div>
-{#            {% if rn_sum_week_growth > 0 %}#}
-            {% if week_yearOveryear_rate > 0 %}
-             <div class="numdata-line data"><i id="week_yearOveryear_rate"
-                                                 class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                 {{ week_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-             {% else %}
-             <div class="numdata-line data"><i id="week_yearOveryear_rate"
-                                                 class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                 {{ week_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本周同比变化率-->
-            {% if week_weekOverweek_rate > 0 %}
-                <div class="numdata-line data"><i id="week_weekOverweek_rate"
-                                                  class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                    {{ week_weekOverweek_rate|floatformat:2}}<span
-                        class="unit"> %</span></div>
+                <div class="numdata-line title">本周人数</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
+                <div class="numdata-line data">{{ num_this_week }}<span class="unit"> 人</span></div>
+                {#            {% if rn_sum_week_growth > 0 %}#}
+                {% if week_yearOveryear_rate > 0 %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
                 {% else %}
-                <div class="numdata-line data"><i id="week_weekOverweek_rate"
-                                                  class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                    {{ week_weekOverweek_rate|floatformat:2}}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本周环比变化率-->
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周同比变化率-->
+                {% if week_weekOverweek_rate > 0 %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_weekOverweek_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_weekOverweek_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周环比变化率-->
 
-            <div class="numdata-line title">本月人数</div>
-            <div class="numdata-line title">同比变化率</div>
-            <div class="numdata-line title">环比变化率</div>
-            <div class="numdata-line data">{{ num_this_month }}<span class="unit"> 人</span></div>
-            {% if month_yearOveryear_rate > 0 %}
-             <div class="numdata-line data"><i id="month_yearOveryear_rate"
-                                                 class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                 {{ month_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-             {% else %}
-             <div class="numdata-line data"><i id="month_yearOveryear_rate"
-                                                 class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                 {{ month_yearOveryear_rate|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本月同比变化率-->
-            {% if month_monthOvermonth_rate > 0 %}
-                <div class="numdata-line data"><i id="month_monthOvermonth_rate"
-                                                  class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                    {{ month_monthOvermonth_rate|floatformat:2}}<span
-                        class="unit"> %</span></div>
+                <div class="numdata-line title">本月人数</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
+                <div class="numdata-line data">{{ num_this_month }}<span class="unit"> 人</span></div>
+                {% if month_yearOveryear_rate > 0 %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
                 {% else %}
-                <div class="numdata-line data"><i id="month_monthOvermonth_rate"
-                                                  class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                    {{ month_monthOvermonth_rate|floatformat:2}}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本月环比变化率-->
-        </div>
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月同比变化率-->
+                {% if month_monthOvermonth_rate > 0 %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_monthOvermonth_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_monthOvermonth_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月环比变化率-->
+            </div>
         </div>
         <div class="container-block col-md-12" id="nowwarning">
 
@@ -174,7 +173,7 @@
                 <div class="container-tag">当前情况</div>
             </div>
             <div class="container-content" id="container-nowwarning">
-                    {% for item in curwarn %}
+                {% for item in curwarn %}
                     {% if item.type == 1 and item.level == 1 %}
                         <div class="content-curwarn col-md-12"
                              style="background-color: #ff0e00;">{{ item.scenicName }}-{{ item.level }}级承载量预警
@@ -204,9 +203,9 @@
     <div class="col-md-6  col-sm-12" id="col2">
         <div class="container-block col-md-12" id="heatmap">
             <div class="container-header">
-            <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
-            <div class="container-tag">当前情况</div>
-        </div>
+                <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
+                <div class="container-tag">当前情况</div>
+            </div>
             <div class="container-content" id="container-heatmap">
 
             </div>
@@ -228,79 +227,79 @@
                 <div class="container-tag">历史数据</div>
             </div>
             <div class="container-content" id="container-warndata">
-            <div class="warndata-line title">本周预警次数</div>
-            <div class="warndata-line title">同比变化率</div>
-            <div class="warndata-line title">环比变化率</div>
-            <div class="warndata-line data">{{ num_this_week_warn }}<span class="unit"> 次</span></div>
-            {% if week_yearOveryear_rate_warn > 0 %}
-             <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
-                                                 class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                 {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-             {% else %}
-             <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
-                                                 class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                 {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本周同比变化率-->
-            {% if week_weekOverweek_rate_warn > 0 %}
-                <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
-                                                  class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                    {{ week_weekOverweek_rate_warn|floatformat:2}}<span
-                        class="unit"> %</span></div>
+                <div class="warndata-line title">本周预警次数</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
+                <div class="warndata-line data">{{ num_this_week_warn }}<span class="unit"> 次</span></div>
+                {% if week_yearOveryear_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
                 {% else %}
-                <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
-                                                  class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                    {{ week_weekOverweek_rate_warn|floatformat:2}}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本周环比变化率-->
-            <div class="warndata-line title">本月预警次数</div>
-            <div class="warndata-line title">同比变化率</div>
-            <div class="warndata-line title">环比变化率</div>
-            <div class="warndata-line data">{{ num_this_month_warn }}<span class="unit"> 次</span></div>
-            {% if month_yearOveryear_rate_warn > 0 %}
-             <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
-                                                 class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                 {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-             {% else %}
-             <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
-                                                 class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                 {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本月同比变化率-->
-            {% if month_monthOvermonth_rate_warn > 0 %}
-                <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
-                                                  class="fa fa-arrow-up"
-                                                  aria-hidden="true"
-                                                  style="color: red"></i>
-                    {{ month_monthOvermonth_rate_warn|floatformat:2}}<span
-                        class="unit"> %</span></div>
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周同比变化率-->
+                {% if week_weekOverweek_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
                 {% else %}
-                <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
-                                                  class="fa fa-arrow-down"
-                                                  aria-hidden="true"
-                                                  style="color: green"></i>
-                    {{ month_monthOvermonth_rate_warn|floatformat:2}}<span
-                        class="unit"> %</span></div>
-            {% endif %}
-            <!--显示本月环比变化率-->
-        </div>
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周环比变化率-->
+                <div class="warndata-line title">本月预警次数</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
+                <div class="warndata-line data">{{ num_this_month_warn }}<span class="unit"> 次</span></div>
+                {% if month_yearOveryear_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月同比变化率-->
+                {% if month_monthOvermonth_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月环比变化率-->
+            </div>
         </div>
         <div class="container-block col-md-12" id="piedata">
             <div class="container-header">
@@ -328,254 +327,254 @@
 {% block baiduimg %}
     <script type="text/javascript">
         var map = new BMap.Map("container-heatmap");
-        map.centerAndZoom(new BMap.Point({{ scenic_lng }},{{ scenic_lat }}), 16); //创建地图
-        {#map.addEventListener("click",function (e) {#}
-        {#alert(e.point.lng + "," + e.point.lat);#}
-        {#}); //获取点击出的pos,用来确定各个景区的具体位置#}
+        map.centerAndZoom(new BMap.Point({{ scenic_lng }}, {{ scenic_lat }}), 16); //创建地图
+        {# map.addEventListener("click",function (e) {#}
+        {# alert(e.point.lng + "," + e.point.lat);#}
+        {# }); //获取点击出的pos,用来确定各个景区的具体位置#}
         map.enableScrollWheelZoom(true); //允许滚轮滑动来放大缩小地图
 
-    map.addControl(new BMap.MapTypeControl(
-       {
-           mapTypes: [BMAP_NORMAL_MAP,BMAP_HYBRID_MAP],
-       }
-    )); //添加跟换地图类型的控件
-    var marker = new BMap.Marker(new BMap.Point({{ scenic_lng }},{{ scenic_lat }}));
-    map.addOverlay(marker); //添加一个小红点
-    marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
-    var content = '标注';
-    var info = new BMap.InfoWindow(content);
-    marker.addEventListener("click",function () {
-       this.openInfoWindow(info);
-    });           //点击时会出现提示信息
+        map.addControl(new BMap.MapTypeControl(
+            {
+                mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
+            }
+        )); //添加跟换地图类型的控件
+        var marker = new BMap.Marker(new BMap.Point({{ scenic_lng }}, {{ scenic_lat }}));
+        map.addOverlay(marker); //添加一个小红点
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
+        var content = '标注';
+        var info = new BMap.InfoWindow(content);
+        marker.addEventListener("click", function () {
+            this.openInfoWindow(info);
+        });           //点击时会出现提示信息
 
-    $(function () {
-       getHeatMapData()
-    }); //地图一加载就初始化热力图
+        $(function () {
+            getHeatMapData()
+        }); //地图一加载就初始化热力图
 
-    heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":20});
-    map.addOverlay(heatmapOverlay);     //添加热力图到地图中，此时还没有热力图数据，不会显示出热力图
-    function getHeatMapData() {
-        id = {{ scenic_id }}
-       $.get('/capacityWeb/getScenicHeartMapData/',{'_scenicid':id},function (msg) {
-           try {
-               heatmapOverlay.setDataSet({data:msg,max:100});
-           }catch (e) {
-               alert(e.message)
-           } //捕获失败原因
-       }); //发送ajax请求，从数据库中取出数据并更新热力图数据，此部分为复用部分
-    }
+        heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+        map.addOverlay(heatmapOverlay);     //添加热力图到地图中，此时还没有热力图数据，不会显示出热力图
+        function getHeatMapData() {
+            id = {{ scenic_id }}
+                $.get('/capacityWeb/getScenicHeartMapData/', {'_scenicid': id}, function (msg) {
+                    try {
+                        heatmapOverlay.setDataSet({data: msg, max: 100});
+                    } catch (e) {
+                        alert(e.message)
+                    } //捕获失败原因
+                }); //发送ajax请求，从数据库中取出数据并更新热力图数据，此部分为复用部分
+        }
     </script>
 {% endblock %}
 <script type="text/javascript">
     try {
-var myChart = echarts.init(document.getElementById('container-numsMonthRank'));
-var option = {
-    tooltip:{
-        trigger: 'axis',
-        axisPointer:{type:'line'}
-    },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
-    yAxis:{
-      type: 'category',
-        <!--设置y轴为类型轴-->
-      data:{{ place_month_rank | safe }},
-        <!--设置类型数据，在这里是各个地点。-->
-        axisTick: {
-          inside:false,
-            alignWithLabel:true,
-            lineStyle: {
-              color: '#c3c3c3',
+        var myChart = echarts.init(document.getElementById('container-numsMonthRank'));
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {type: 'line'}
+            },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
+            yAxis: {
+                type: 'category',
+                <!--设置y轴为类型轴-->
+                data:{{ place_month_rank | safe }},
+                <!--设置类型数据，在这里是各个地点。-->
+                axisTick: {
+                    inside: false,
+                    alignWithLabel: true,
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的轴线：灰色-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                }, <!--设置y上的label：黑色粗体-->
+            }, <!--设置y轴的属性-->
+            xAxis: {
+                type: 'value',
+                <!--设置x轴为value轴-->
+                show: true,
+                splitNumber: 5,
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的分割线：虚线-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的轴线：灰色虚线-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                },
+                <!--设置x轴上显示的标签：黑色粗体-->
+                axisTick: {
+                    color: '#c3c3c3',
+                },
+                <!--设置x轴上的‘突出物’：灰色对齐-->
             },
-        },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
-        axisLine:{
-          lineStyle:{
-              color:'#c3c3c3',
-          },
-        },<!--设置y轴的轴线：灰色-->
-        axisLabel:{
-            fontWeight:'bold',
-            color:'#000',
-        }, <!--设置y上的label：黑色粗体-->
-    }, <!--设置y轴的属性-->
-    xAxis:{
-        type:'value',
-        <!--设置x轴为value轴-->
-        show:true,
-        splitNumber:5,
-        splitLine:{
-            lineStyle:{
-                type:'dotted',
+            grid: {
+                show: false,
+                top: '1%',
+                bottom: '1%',
+                left: '1%',
+                right: '7%',
+                <!--这里的top,bottom,left,right相当于margin-->
+                containLabel: true,
+                <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
             },
-        },
-        <!--设置x轴的分割线：虚线-->
-        axisLine:{
-          lineStyle:{
-              color:'#c3c3c3',
-              type:'dotted',
-          },
-        },
-        <!--设置x轴的轴线：灰色虚线-->
-        axisLabel: {
-            fontWeight: 'bold',
-            color:'#000',
-        },
-        <!--设置x轴上显示的标签：黑色粗体-->
-        axisTick:{
-            color:'#c3c3c3',
-        },
-        <!--设置x轴上的‘突出物’：灰色对齐-->
-    },
-    grid:{
-        show: false,
-        top:'1%',
-        bottom: '1%',
-        left:'1%',
-        right:'7%',
-        <!--这里的top,bottom,left,right相当于margin-->
-        containLabel:true,
-        <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
-    },
-    series:[
-        {
-            name:'人数',
-            type:'bar',
-            data:{{ nums_month_rank }},
-            label:{   <!--在柱状图上显示数字，有点丑不显示为好-->
-                show:false,
-                position:'insideTop',
-                rotate:20,
-                color:'#eee',
-            },
-            itemStyle:{
-                color:'#E14E35',
-            }
-        }
-    ]
-};
-myChart.setOption(option)
-    }catch (e) {
+            series: [
+                {
+                    name: '人数',
+                    type: 'bar',
+                    data:{{ nums_month_rank }},
+                    label: {   <!--在柱状图上显示数字，有点丑不显示为好-->
+                        show: false,
+                        position: 'insideTop',
+                        rotate: 20,
+                        color: '#eee',
+                    },
+                    itemStyle: {
+                        color: '#E14E35',
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option)
+    } catch (e) {
         alert(e.message)
     }
 
 </script>
 <script type="text/javascript">
     try {
-var myChart = echarts.init(document.getElementById('container-numsWeekRank'));
-var option = {
-    tooltip:{
-        trigger: 'axis',
-        axisPointer:{type:'line'}
-    },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
-    yAxis:{
-      type: 'category',
-        <!--设置y轴为类型轴-->
-      data:{{ place_week_rank | safe }},
-        <!--设置类型数据，在这里是各个地点。-->
-        axisTick: {
-          inside:false,
-            alignWithLabel:true,
-            lineStyle: {
-              color: '#c3c3c3',
+        var myChart = echarts.init(document.getElementById('container-numsWeekRank'));
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {type: 'line'}
+            },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
+            yAxis: {
+                type: 'category',
+                <!--设置y轴为类型轴-->
+                data:{{ place_week_rank | safe }},
+                <!--设置类型数据，在这里是各个地点。-->
+                axisTick: {
+                    inside: false,
+                    alignWithLabel: true,
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的轴线：灰色-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                }, <!--设置y上的label：黑色粗体-->
+            }, <!--设置y轴的属性-->
+            xAxis: {
+                type: 'value',
+                <!--设置x轴为value轴-->
+                boundaryGap: true,
+                show: true,
+                splitNumber: 5,
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的分割线：虚线-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的轴线：灰色虚线-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                },
+                <!--设置x轴上显示的标签：黑色粗体-->
+                axisTick: {
+                    color: '#c3c3c3',
+                },
+                <!--设置x轴上的‘突出物’：灰色对齐-->
             },
-        },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
-        axisLine:{
-          lineStyle:{
-              color:'#c3c3c3',
-          },
-        },<!--设置y轴的轴线：灰色-->
-        axisLabel:{
-            fontWeight:'bold',
-            color:'#000',
-        }, <!--设置y上的label：黑色粗体-->
-    }, <!--设置y轴的属性-->
-    xAxis:{
-        type:'value',
-        <!--设置x轴为value轴-->
-        boundaryGap: true,
-        show:true,
-        splitNumber:5,
-        splitLine:{
-            lineStyle:{
-                type:'dotted',
+            grid: {
+                show: false,
+                top: '1%',
+                bottom: '1%',
+                left: '1%',
+                right: '7%',
+                <!--这里的top,bottom,left,right相当于margin-->
+                containLabel: true,
+                <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
             },
-        },
-        <!--设置x轴的分割线：虚线-->
-        axisLine:{
-          lineStyle:{
-              color:'#c3c3c3',
-              type:'dotted',
-          },
-        },
-        <!--设置x轴的轴线：灰色虚线-->
-        axisLabel: {
-            fontWeight: 'bold',
-            color:'#000',
-        },
-        <!--设置x轴上显示的标签：黑色粗体-->
-        axisTick:{
-            color:'#c3c3c3',
-        },
-        <!--设置x轴上的‘突出物’：灰色对齐-->
-    },
-    grid:{
-        show: false,
-        top:'1%',
-        bottom: '1%',
-        left:'1%',
-        right:'7%',
-        <!--这里的top,bottom,left,right相当于margin-->
-        containLabel:true,
-        <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
-    },
-    series:[
-        {
-            name:'人数',
-            type:'bar',
-            data:{{ nums_week_rank }},
-            label:{   <!--在柱状图上显示数字，有点丑不显示为好-->
-                show:false,
-                position:'insideTop',
-                rotate:20,
-                color:'#eee',
-            },
-            itemStyle:{
-                color:'#8099E1',
-            }
-        }
-    ]
-};
-myChart.setOption(option)
-    }catch (e) {
+            series: [
+                {
+                    name: '人数',
+                    type: 'bar',
+                    data:{{ nums_week_rank }},
+                    label: {   <!--在柱状图上显示数字，有点丑不显示为好-->
+                        show: false,
+                        position: 'insideTop',
+                        rotate: 20,
+                        color: '#eee',
+                    },
+                    itemStyle: {
+                        color: '#8099E1',
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option)
+    } catch (e) {
         alert(e.message)
     }
 
 </script>
 
 <script type="text/javascript">
-        try {
-            var myChart = echarts.init(document.getElementById('container-numbar'));//定义折线图显示的位置对象
-            var datas = {{ start_data }},
+    try {
+        var myChart = echarts.init(document.getElementById('container-numbar'));//定义折线图显示的位置对象
+        var datas = {{ start_data }},
             option = {
-                    tooltip: {
+                tooltip: {
                     trigger: 'axis',
-                    },
+                },
                 xAxis: {
                     type: 'time',
                     splitLine: {
                         show: true
                     },
-                    splitArea:{
+                    splitArea: {
                         show: true,
                     },
-                    axisLabel:{
-                      interale:0,
-                      rotate: 0,
-                      margin:8,
-                        fontWeight:'bold',
-                      formatter: function (value) {
-                          var t_date = new Date(value);
-                          return [t_date.getMonth()+1, t_date.getDate()].join('-')+" "
-                          + [t_date.getHours(), t_date.getMinutes()].join(':');
-                      }
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " "
+                                + [t_date.getHours(), t_date.getMinutes()].join(':');
+                        }
                     },
                 },
                 yAxis: {
@@ -584,15 +583,15 @@ myChart.setOption(option)
                     splitLine: {
                         show: true,
                     },
-                    axisLabel:{
-                        fontWeight:'bold',
+                    axisLabel: {
+                        fontWeight: 'bold',
                     },
                     splitArea: {
-                        show:false,
+                        show: false,
                     },
 
                 },
-                grid:{
+                grid: {
                     bottom: '8%',
                     top: '5%',
                     right: '5%',
@@ -605,10 +604,10 @@ myChart.setOption(option)
                     data: datas
                 }]
             };
-            myChart.setOption(option);
-            setInterval(function () {
-                var id = {{ scenic_id }}
-                $.get('/capacityWeb/updatetodayTouristNums/',{'scenicid':id},function (msg) {
+        myChart.setOption(option);
+        setInterval(function () {
+            var id = {{ scenic_id }}
+                $.get('/capacityWeb/updatetodayTouristNums/', {'scenicid': id}, function (msg) {
                     datas.length = 0;
                     datas = msg;
                     myChart.setOption({
@@ -617,35 +616,34 @@ myChart.setOption(option)
                         }]
                     })
                 })
-            },60000)
-        }catch (e) {
-            alert(e.message)
-        }
-
+        }, 60000)
+    } catch (e) {
+        alert(e.message)
+    }
 
 </script>
 <script type="text/javascript">
     try {
-        myChart2 = echarts.init(document.getElementById('container-piedata1'))
+        myChart2 = echarts.init(document.getElementById('container-piedata1'));
         option = {
             tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b}月份 : {c} ({d}%)"
             },
-            calculable : true,
+            calculable: true,
             series: [
                 {
                     name: '游客人数',
                     type: 'pie',
-                    radius: [0,70],
-                    center:['50%','42%'],
+                    radius: [0, 50],
+                    center: ['50%', '42%'],
 
                     label: {
-                        normal:{
-                          show: false
+                        normal: {
+                            show: false
                         },
-                        emphasis:{
-                            show:false
+                        emphasis: {
+                            show: false
                         }
                     },
 
@@ -654,7 +652,7 @@ myChart.setOption(option)
             ]
         };
         myChart2.setOption(option)
-    }catch (e) {
+    } catch (e) {
         alert(e.message)
     }
 </script>
@@ -662,33 +660,33 @@ myChart.setOption(option)
 <script>
     try {
         myChart3 = echarts.init(document.getElementById('container-piedata2'));
-        option ={
+        option = {
             tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
             },
-          series: [
-              {
-                  name: '游客人数',
-                  type: 'pie',
-                  radius:[0,70],
-                  center:['50%','42%'],
+            series: [
+                {
+                    name: '游客人数',
+                    type: 'pie',
+                    radius: [0, 50],
+                    center: ['50%', '42%'],
 
-                  label:{
-                      normal:{
-                          show:false,
-                      },
-                      emphasis:{
-                          show:false,
-                      },
-                  },
-                  data: {{ distribute_lastYear | safe }}
+                    label: {
+                        normal: {
+                            show: false,
+                        },
+                        emphasis: {
+                            show: false,
+                        },
+                    },
+                    data: {{ distribute_lastYear | safe }}
 
-              }
-          ]
+                }
+            ]
         };
         myChart3.setOption(option)
-    }catch (e) {
+    } catch (e) {
         alert(e.message)
     }
 </script>

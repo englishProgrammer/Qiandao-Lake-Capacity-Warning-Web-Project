@@ -228,9 +228,8 @@ def getTouristNums():
         context['rn_sum_week_growth'] = rn_sum_week - rn_sum_week_lastyear
         context['rn_sum_week_rate'] = (rn_sum_week - rn_sum_week_lastyear) / rn_sum_week * 100
         context['rn_sum_month'] = rn_sum_month
-        # 为了测试！到时改回来
-        context['rn_sum_month_growth'] = -(rn_sum_month - rn_sum_month_lastyear)
-        context['rn_sum_month_rate'] = -(rn_sum_month - rn_sum_month_lastyear) / rn_sum_month * 100
+        context['rn_sum_month_growth'] = (rn_sum_month - rn_sum_month_lastyear)
+        context['rn_sum_month_rate'] = (rn_sum_month - rn_sum_month_lastyear) / rn_sum_month * 100
     return context
 
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from capacityWeb import views
+
 app_name = '[capacityWeb]'
 urlpatterns = [
     path('index/', views.index, name='index'),
@@ -13,6 +14,5 @@ urlpatterns = [
     path('guihua/', views.guihua, name='guihua'),
     path('mishan/', views.mishan, name='mishan'),
     path('updatetodayTouristNums/', views.updatetodayTouristNums),
-    path('getScenicHeartMapData/', views.getScenicHeartMapData)
-
+    path('getScenicHeartMapData/', views.getScenicHeartMapData),
 ]
