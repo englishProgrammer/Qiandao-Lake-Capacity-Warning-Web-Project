@@ -329,9 +329,9 @@
     <script type="text/javascript">
         var map = new BMap.Map("container-heatmap");
         map.centerAndZoom(new BMap.Point({{ scenic_lng }},{{ scenic_lat }}), 16); //创建地图
-        map.addEventListener("click",function (e) {
-        alert(e.point.lng + "," + e.point.lat);
-        }); //获取点击出的pos,用来确定各个景区的具体位置
+        {#map.addEventListener("click",function (e) {#}
+        {#alert(e.point.lng + "," + e.point.lat);#}
+        {#}); //获取点击出的pos,用来确定各个景区的具体位置#}
         map.enableScrollWheelZoom(true); //允许滚轮滑动来放大缩小地图
 
     map.addControl(new BMap.MapTypeControl(
