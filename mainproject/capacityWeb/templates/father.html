@@ -37,7 +37,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖旅游景区承载量预警平台</a>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖旅游景区承载量预警平台-{{ NAME }}</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
@@ -341,11 +341,6 @@
         var marker = new BMap.Marker(new BMap.Point({{ scenic_lng }}, {{ scenic_lat }}));
         map.addOverlay(marker); //添加一个小红点
         marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
-        var content = '标注';
-        var info = new BMap.InfoWindow(content);
-        marker.addEventListener("click", function () {
-            this.openInfoWindow(info);
-        });           //点击时会出现提示信息
 
         $(function () {
             getHeatMapData()
