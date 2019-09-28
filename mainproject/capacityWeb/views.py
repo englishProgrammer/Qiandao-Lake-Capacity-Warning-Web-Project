@@ -1,5 +1,6 @@
-import datetime, json, random, itertools
+import time, datetime, json, random, itertools
 import decimal
+import numpy as np
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
@@ -7,50 +8,25 @@ from django.db import connection
 from django.utils.safestring import SafeString
 from .models import Scenic, Recordnums, Recordwarnings, Camera
 from dateutil.relativedelta import relativedelta
-from django.db.models import Max
+from django.db.models import Max, Sum
 
 
 def test(request):
-    # # 添加RecordNums表
-    # for i in range(1, 9):  # 8个景区
-    #     for j in range(1, 16):  # 5个摄像头位置
-    #         for y in range(2, 9):
-    #             t = datetime.datetime.now() - relativedelta(months=y)
-    #             for k in range(10):  # 10天
-    #                 t = t + datetime.timedelta(days=1)
-    #                 year = t.year
-    #                 month = t.month
-    #                 day = t.day
-    #                 hour = t.hour
-    #                 minute = t.minute
-    #                 second = t.second
-    #                 createAt = str(t)[:19]
-    #                 nums = random.randint(0, 1000)
-    #                 sce_obj = Scenic.objects.get(scenicid=i)
-    #                 cam_obj = Camera.objects.get(scenicid=i, camid=j)
-    #                 Recordnums.objects.create(scenicid=sce_obj, camid=cam_obj, nums=nums, year=year, month=month,
-    #                                           day=day,
-    #                                           hour=hour,
-    #                                           minute=minute, sec=second, createat=createAt)
-    # # 添加RecordWarning表
-    # for i in range(1, 9):  # 8个景区
-    #     t = datetime.datetime.now() - relativedelta(years=0)
-    #     for k in range(6 + i):  # 天
-    #         t = t + datetime.timedelta(days=1)
-    #         createAt = str(t)[:19]
-    #         level = random.randint(1, 3)
-    #         Recordwarnings.objects.create(scenicid=i, camid=0, level=level, type=1, createat=createAt)
-    # # 添加camera表
-    # island_names = ['梅峰岛', '黄山尖', '天池岛', '月光岛', '龙山岛', '渔乐岛', '桂花岛', '蜜山岛']
-    # lng_list = [118.913233, 119.113483, 119.150892, 119.010011, 118.986830, 118.949720, 119.021276, 119.161023]
-    # lat_list = [29.590827, 29.574242, 29.539735, 29.616902, 29.611948, 29.581553, 29.600432, 29.524773]
-    # for i in range(0, 8):  # 8个景区
-    #     for j in range(0, 16):  # 16个摄像头
-    #         lng_rnd = round(random.uniform(0.0001, 0.001), 6)
-    #         lat_rnd = round(random.uniform(0.0001, 0.001), 6)
-    #         sce_obj = Scenic.objects.get(scenicid=i+1)
-    #         Camera.objects.create(camid=j, scenicid=sce_obj, camplace=island_names[i] + '摄像头' + str(j),
-    #                               camLng=lng_list[i] + lng_rnd, camlat=lat_list[i] + lat_rnd)
+    today_start = datetime.datetime.strptime('2019-9-28', '%Y-%m-%d')
+    while today_start.day == 28:
+        scenic = Scenic.objects.get(scenicid=-1)
+        camid = random.randint(1, 15)
+        cam = Camera.objects.get(scenicid=1, camid=camid)
+        nums = random.randint(1, 200)
+        year, month, day, hour, minute, sec = today_start.year, today_start.month, today_start.day, today_start.hour, \
+                                              today_start.minute, today_start.second
+        createat = str(today_start)[:19]
+        r = Recordnums(scenicid=scenic, camid=cam, nums=nums, year=year, month=month, \
+                       day=day, hour=hour, minute=minute, sec=sec, createat=createat)
+        r.save()
+        today_start += relativedelta(minutes=1)
+        print(today_start)
+
     return render(request, 'test.html')
 
 
@@ -114,7 +90,7 @@ def getIntervalWarnNums(start, end, scenicid):
     :return: 获得某岛的一段时间内的预警次数
     """
     start_str = str(start)[:10]
-    end = end + relativedelta(days=1)
+    end = end + relativedelta(days=1)  # 因为是半闭合区间
     end_str = str(end)[:10]
 
     sum_ = 0
@@ -338,6 +314,64 @@ def getWarnNums():
     return context
 
 
+def getScenicPlaceRank_week(scenicid_):
+    """
+
+    :param scenicid:
+    :return: 获得某一个岛屿本周人数排行
+    """
+    current_time = datetime.datetime.now()
+    monday, sunday = get_current_week()
+    week_end = current_time + relativedelta(days=1)
+    week_end_str = str(week_end)[:10]
+    week_start_str = str(monday)[:10]
+    # 获得本月起始时间与当前时间的字符串形式
+
+    result = Recordnums.objects.filter(scenicid=scenicid_, createat__gt=week_start_str,
+                                       createat__lt=week_end_str).values('camid').annotate(
+        sun_num=Sum("nums")).order_by('sun_num')
+    # 获得代号为scenicid_岛的各个摄像头的本月人流量
+
+    tourist_num = []
+    places = []
+    for r in result:
+        tourist_num.append(r['sun_num'])
+        place = Camera.objects.filter(scenicid=scenicid_, camid=r['camid']).values('camplace')[0]['camplace']
+        places.append(place)
+    # 因为利用直方图来显示的时候需要categories和date，所以将其分别放入places和tourist_num
+    scenicplacerankweek_context = {'place_week_rank': places, 'nums_week_rank': tourist_num}
+    return scenicplacerankweek_context
+
+
+def getScenicPlaceRank(scenicid_):
+    """
+    得到某一个岛的本月从月初到现在的游客人数排行榜
+    :param scenicid_:
+    :return: {'data':[data]},{'places':[placename]}
+    """
+    current_time = datetime.datetime.now()
+    month_start = current_time - relativedelta(days=current_time.day - 1)
+    month_end = current_time + relativedelta(days=1)
+    month_end_str = str(month_end)[:10]
+    month_start_str = str(month_start)[:10]
+    # 获得本月起始时间与当前时间的字符串形式
+
+    result = Recordnums.objects.filter(scenicid=scenicid_, createat__gt=month_start_str,
+                                       createat__lt=month_end_str).values('camid').annotate(
+        sun_num=Sum("nums")).order_by('sun_num')
+    # 获得代号为scenicid_岛的各个摄像头的本月人流量
+
+    tourist_num = []
+    places = []
+    for r in result:
+        tourist_num.append(r['sun_num'])
+        place = Camera.objects.filter(scenicid=scenicid_, camid=r['camid']).values('camplace')[0]['camplace']
+        places.append(place)
+    # 因为利用直方图来显示的时候需要categories和date，所以将其分别放入places和tourist_num
+    scenicplacerank_context = {'place_month_rank': places, 'nums_month_rank': tourist_num}
+    return scenicplacerank_context
+
+
 def getScenicRank():
     """
     景区人数排行模块
@@ -483,28 +517,110 @@ def meifeng(request):
     :param request:
     :return: 返回梅峰岛景区信息
     """
-    # 参数
+    context = getScenicContext(1)
+    return render(request, 'mf_scenic.html', context=context)
+
+
+def huangshanjian(request):
+    """
+
+    :param request:
+    :return: 返回黄山尖景区信息
+    """
+    context = getScenicContext(2)
+    return render(request, 'hs_scenic.html', context=context)
+
+
+def tianchi(request):
+    """
+
+    :param request:
+    :return: 返回天池岛景区信息
+    """
+    context = getScenicContext(3)
+    return render(request, 'tc_scenic.html', context=context)
+
+
+def yueguang(request):
+    """
+
+    :param request:
+    :return: 返回月光岛景区信息
+    """
+    context = getScenicContext(4)
+    return render(request, 'yg_scenic.html', context=context)
+
+
+def longshan(request):
+    """
+
+    :param request:
+    :return: 返回龙山岛景区信息
+    """
+    context = getScenicContext(5)
+    return render(request, 'longshan_scenic.html', context=context)
+
+
+def yule(request):
+    """
+
+    :param request:
+    :return: 返回渔乐岛景区信息
+    """
+    context = getScenicContext(6)
+    return render(request, 'yl_scenic.html', context=context)
+
+
+def guihua(request):
+    """
+
+    :param request:
+    :return: 返回桂花岛景区信息
+    """
+
+    context = getScenicContext(7)
+    return render(request, 'gh_scenic.html', context=context)
+
+
+def mishan(request):
+    """
+
+    :param request:
+    :return: 返回蜜山岛信息
+    """
+    context = getScenicContext(8)
+    return render(request, 'ms_scenic.html', context=context)
+
+
+def getScenicContext(scenicid_):
     context = {}
+
+    # 岛屿参数
+    info_context = getScenicInfo(scenicid_)
+    context.update(info_context)
     # 游客人数模块
-    tourist_context = getScenicTouristNums(1)
+    tourist_context = getScenicTouristNums(scenicid_)
     context.update(tourist_context)
     # 预警次数模块
-    warnnums_context = getScenicWarntNums(1)
+    warnnums_context = getScenicWarntNums(scenicid_)
     context.update(warnnums_context)
-    # 人数排行模块
-    scenicrank_context = getScenicRank()
-    context.update(scenicrank_context)
-    # 预警排行模块
-    warnrank_context = getWarnRank()
-    context.update(warnrank_context)
+    # 本月人数排行模块
+    scenicplacerank_context = getScenicPlaceRank(scenicid_)
+    context.update(scenicplacerank_context)
+    # 本周人数排行模块
+    scenicplacerankweek_context = getScenicPlaceRank_week(scenicid_)
+    context.update(scenicplacerankweek_context)
     # 景区人数变化模块
-    numbar_context = getNumBar()
+    numbar_context = todayTouristNumChangeStart(scenicid_)
     context.update(numbar_context)
     # 当前预警信息模块
     curwarn_context = getCurrentWarn()
     context.update(curwarn_context)
+    # 游客人数分布模块
+    distribute_context = getTouristDistribute(scenicid_)
+    context.update(distribute_context)
 
-    return render(request, 'mf_scenic.html', context=context)
+    return context
 
 
 def getScenicHeartMapData(request):
@@ -546,3 +662,81 @@ def getScenicHeartMapData(request):
         # 将各个摄像头的数据存入result_latest
 
     return JsonResponse(result_latest, safe=False, json_dumps_params={'ensure_ascii': False})
+
+
+def todayTouristNumChangeStart(scenicid):
+    start_data = getTodayIntervalTouristNums(scenicid)
+    context = {'start_data': start_data}
+    return context
+
+
+def getTodayIntervalTouristNums(scenicid_=1):
+    """
+
+    :return: 返回当前时间到1小时前的间隔内的数据
+    """
+    today_now = datetime.datetime.now()  # 改
+    today_now = today_now - relativedelta(days=today_now.day - 28)
+    # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
+    today_start = today_now - relativedelta(minutes=60)
+    today_start_str = str(today_start)[:19]
+    today_now_str = str(today_now)[:19]
+
+    result = Recordnums.objects.filter(scenicid=scenicid_, createat__gt=today_start_str,
+                                       createat__lt=today_now_str, sec=0).values(
+        'createat').annotate(all_nums=Sum('nums')).order_by('createat')
+    result_send = []
+    for r in result:
+        timeArray = time.strptime(r['createat'], '%Y-%m-%d %H:%M:%S')
+        timeStamp = int(time.mktime(timeArray)) * 1000
+        nums = r['all_nums']
+        result_item = [timeStamp, nums]
+        result_send.append(result_item)
+    return result_send
+
+
+def updatetodayTouristNums(request):
+    scenicid = request.GET['scenicid']
+    scenicid = int(scenicid)
+    result_send = getTodayIntervalTouristNums(scenicid)
+    return JsonResponse(result_send, safe=False)
+
+
+def getTouristDistribute(scencid_):
+    '''
+
+    :param scencid_:
+    :return: 得到某岛今年与去年的各月份人数分布
+    '''
+    current_time = datetime.datetime.now()
+    last_time = current_time - relativedelta(years=1)
+    # 得到去年今日和今年今日时间
+
+    this_year = current_time.year
+    last_year = last_time.year
+
+    query_this_year = Recordnums.objects.filter(scenicid=scencid_, year=this_year).values('month'). \
+        annotate(sum_num=Sum('nums'))
+    query_last_year = Recordnums.objects.filter(scenicid=scencid_, year=last_year).values('month'). \
+        annotate(sum_num=Sum('nums'))
+
+    result_this_year = []
+    result_last_year = []
+    for r in query_last_year:
+        one_month = {'value': r['sum_num'], 'name': r['month']}
+        result_last_year.append(one_month)
+    for r in query_this_year:
+        one_month = {'value': r['sum_num'], 'name': r['month']}
+        result_this_year.append(one_month)
+    result_send = {'distribute_lastYear': result_last_year, 'distribute_thisYear': result_this_year}
+    return result_send
+
+
+def getScenicInfo(scencid_):
+    result = Scenic.objects.filter(scenicid=scencid_).values()
+    result_send = {}
+    result_send['NAME'] = result[0]['scenicname']
+    result_send['scenic_lng'] = result[0]['lng']
+    result_send['scenic_lat'] = result[0]['lat']
+    result_send['scenic_id'] = result[0]['scenicid']
+    return result_send
