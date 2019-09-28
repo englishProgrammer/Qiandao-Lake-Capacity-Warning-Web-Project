@@ -37,17 +37,27 @@
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#"><i class="fa fa-home"></i>主页</a></li>
+                <li class="active"><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
                             class="fa fa-star"></i>景区详情<span
                             class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-star"></i>景区1详情</a></li>
+                        <li><a href="{% url 'capacityWeb:meifeng' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-star"></i>景区2详情</a></li>
+                        <li><a href="{% url 'capacityWeb:huangshanjian' %}"><i class="fa fa-star"></i>黄山尖</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-star"></i>景区3详情</a></li>
+                        <li><a href="{% url '[capacityWeb]:tianchi' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yueguang' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:longsha' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>挂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
                     </ul>
                 </li>
                 <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
