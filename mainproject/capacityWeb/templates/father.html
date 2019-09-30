@@ -213,7 +213,14 @@
         <div class="container-block col-md-12" id="numbar">
             <div class="container-header">
                 <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
-                <div class="container-tag">一小时内</div>
+                <select class="container-tag" onchange="numbar_onchange()" id="numbar_selected">
+                    <option class="container-tag" value="1" selected>一小时内</option>
+                    <option class="container-tag" value="2" >一周内</option>
+                    <option class="container-tag" value="3" >本月内</option>
+
+
+
+                </select>
             </div>
             <div class="container-content" id="container-numbar">
 
@@ -600,18 +607,134 @@
                 }]
             };
         myChart.setOption(option);
-        setInterval(function () {
-            var id = {{ scenic_id }}
+
+        function oneHourLine() {
+            clearInterval(iUpdate);
+            updateOneHour();
+
+            iUpdate= setInterval(updateOneHour, 60000)
+        }
+
+        function weekLine() {
+            clearInterval(iUpdate);
+
+            updateWeek();
+
+        }
+
+        function monthLine() {
+            clearInterval(iUpdate);
+
+            updateMonth();
+
+        }
+        
+        
+    function numbar_onchange() {
+        var myselect = document.getElementById("numbar_selected");
+        var index = myselect.selectedIndex;
+        var v = myselect.options[index].value;
+        if (v == "1") {
+            oneHourLine();
+        } else if(v == "2") {
+            weekLine();
+        }else {
+            monthLine();
+        }
+    }
+    function updateOneHour() {
+                var id = {{ scenic_id }}
                 $.get('/capacityWeb/updatetodayTouristNums/', {'scenicid': id}, function (msg) {
                     datas.length = 0;
                     datas = msg;
                     myChart.setOption({
+                        xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " "
+                                + [t_date.getHours(), t_date.getMinutes()].join(':');
+                        }
+                    },
+                },
                         series: [{
-                            data: datas
+                            data: datas,
+                            showSymbol: false,
+                            hoverAnimation: false,
                         }]
                     })
                 })
-        }, 60000)
+    }
+    function updateWeek() {
+        myChart.setOption({
+            xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-');
+                        }
+                    },
+                },
+            series:[{
+                data: {{ start_data_week }},
+                showSymbol: true,
+                hoverAnimation: true,
+            }]
+        })
+    }
+    function updateMonth() {
+        myChart.setOption({
+            xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-')
+                             ;
+                        }
+                    },
+                },
+            series:[{
+                data: {{ start_data_month }},
+                showSymbol: true,
+                hoverAnimation: true,
+            }]
+        })
+    }
+
+    var iUpdate= setInterval(updateOneHour, 60000)
     } catch (e) {
         alert(e.message)
     }
@@ -623,15 +746,17 @@
         option = {
             tooltip: {
                 trigger: 'item',
-                formatter: "{a} <br/>{b}月份 : {c} ({d}%)"
+                formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
+                confine:true,
             },
+
             calculable: true,
             series: [
                 {
                     name: '游客人数',
                     type: 'pie',
-                    radius: [0, 50],
-                    center: ['50%', '42%'],
+                    radius: [0, 60],
+                    center: ['50%', '40%'],
 
                     label: {
                         normal: {
@@ -647,6 +772,9 @@
             ]
         };
         myChart2.setOption(option)
+        window.addEventListener("resize",function () {
+            myChart2.resize();
+        })
     } catch (e) {
         alert(e.message)
     }
@@ -659,13 +787,14 @@
             tooltip: {
                 trigger: 'item',
                 formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
+                confine:true,
             },
             series: [
                 {
                     name: '游客人数',
                     type: 'pie',
-                    radius: [0, 50],
-                    center: ['50%', '42%'],
+                    radius: [0, 60],
+                    center: ['50%', '40%'],
 
                     label: {
                         normal: {
@@ -681,6 +810,9 @@
             ]
         };
         myChart3.setOption(option)
+        window.addEventListener("resize",function () {
+            myChart3.resize();
+        })
     } catch (e) {
         alert(e.message)
     }

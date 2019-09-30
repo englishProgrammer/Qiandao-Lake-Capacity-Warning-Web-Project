@@ -195,16 +195,19 @@ html, body {
 
 #nowwarning {
     height: 32.5%;
-    overflow-y: scroll;
+    overflow-y: auto;
+
 }
 
 #nowwarning::-webkit-scrollbar {
     display: none
 }
 
+
+
 #numsMonthRank {
     height: 42%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #numsMonthRank::-webkit-scrollbar {
@@ -213,15 +216,17 @@ html, body {
 
 #numbar {
     height: 42%;
+    overflow-y: auto;
 }
 
 #piedata {
     height: 32.5%;
+    overflow-y: auto;
 }
 
 #numsWeekRank {
     height: 42%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #numsWeekRank::-webkit-scrollbar {
@@ -295,7 +300,7 @@ html, body {
 }
 
 .numdata-line > .unit {
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .numdata-line > .fa {

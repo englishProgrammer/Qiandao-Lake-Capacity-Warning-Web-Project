@@ -2,6 +2,21 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from django.db.models.fields import Field
+
+from django.db.models import Lookup
+
+
+class modEqual(Lookup):
+    lookup_name = 'modEqual'
+
+    def as_sql(self, compiler, connection):
+        lhs, lhs_params = self.process_lhs(compiler, connection)
+        rhs, rhs_params = self.process_rhs(compiler, connection)
+        params = lhs_params + rhs_params
+        print(lhs, lhs_params)
+        print(rhs, rhs_params)
+        return '%s mod %s = 0' % (lhs, rhs), params
 
 
 def main():
@@ -18,4 +33,8 @@ def main():
 
 
 if __name__ == '__main__':
+
+    Field.register_lookup(modEqual)
+    print('registed')
     main()
+
