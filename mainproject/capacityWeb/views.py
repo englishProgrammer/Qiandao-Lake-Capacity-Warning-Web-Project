@@ -12,21 +12,7 @@ from django.db.models import Max, Sum
 
 
 def test(request):
-    today_start = datetime.datetime.strptime('2019-9-28', '%Y-%m-%d')
-    while today_start.day == 28:
-        scenic = Scenic.objects.get(scenicid=-1)
-        camid = random.randint(1, 15)
-        cam = Camera.objects.get(scenicid=1, camid=camid)
-        nums = random.randint(1, 200)
-        year, month, day, hour, minute, sec = today_start.year, today_start.month, today_start.day, today_start.hour, \
-                                              today_start.minute, today_start.second
-        createat = str(today_start)[:19]
-        r = Recordnums(scenicid=scenic, camid=cam, nums=nums, year=year, month=month, \
-                       day=day, hour=hour, minute=minute, sec=sec, createat=createat)
-        r.save()
-        today_start += relativedelta(minutes=1)
-        print(today_start)
-
+    result = Recordnums.objects.filter(minute__modEqual=5).values('scenicid', 'month')
     return render(request, 'test.html')
 
 
@@ -74,7 +60,8 @@ def getIntervalTouristNums(start, end, scenicid):
     """
     nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year],
                                                    month__range=[start.month, end.month],
-                                                   day__range=[start.day, end.day]).values("nums")
+                                                   day__range=[start.day, end.day],
+                                                   ).values("nums")
     sum_ = 0
     for r in nums_this_Interval:
         sum_ += r['nums']
@@ -665,8 +652,58 @@ def getScenicHeartMapData(request):
 
 def todayTouristNumChangeStart(scenicid):
     start_data = getTodayIntervalTouristNums(scenicid)
-    context = {'start_data': start_data}
+    start_data_week = getThisWeekTouristNums(scenicid)
+    start_data_month = getThisMonthTouristNums(scenicid)
+    context = {'start_data': start_data, 'start_data_week': start_data_week, 'start_data_month': start_data_month}
     return context
+
+
+def getThisWeekTouristNums(scencicid=1):
+    """
+
+    :param scencicid:
+    :return: 返回本周内人数
+    """
+    monday, sunday = get_current_week()
+    monday = monday + relativedelta(days=1)
+    today = datetime.datetime.now()
+
+    result = Recordnums.objects.filter(scenicid=scencicid, day__gte=monday.day, day__lte=today.day \
+                                       , year__gte=monday.year, year__lte=today.year, \
+                                       month__gte=monday.month, month__lte=today.month).values('year', 'month',
+                                                                                               'day').annotate(
+        weeknums=Sum('nums')).order_by('-year', '-month', '-day')
+    result_send = []
+    for i, r in enumerate(result):
+        nums = r['weeknums']
+        timeArray = time.strptime(str(r['year']) + '-' + str(r['month']) + '-' + str(r['day']), '%Y-%m-%d')
+        timeStamp = int(time.mktime(timeArray)) * 1000
+        result_item = [timeStamp, nums]
+        result_send.append(result_item)
+    return result_send
+
+
+def getThisMonthTouristNums(scencicid=1):
+    """
+
+    :param scencicid:
+    :return: 返回本月份内人数
+    """
+
+    today = datetime.datetime.now()
+    start = today - relativedelta(days=today.day - 1)
+    result = Recordnums.objects.filter(scenicid=scencicid, day__gte=start.day, day__lte=today.day \
+                                       , year__gte=start.year, year__lte=today.year, month__gte=start.month,
+                                       month__lte=today.month).values('year', 'month', 'day').annotate(
+        weeknums=Sum('nums')).order_by('-year', '-month', '-day')
+    result_send = []
+    for r in result:
+        nums = r['weeknums']
+        timeArray = time.strptime(str(r['year']) + '-' + str(r['month']) + '-' + str(r['day']), '%Y-%m-%d')
+        timeStamp = int(time.mktime(timeArray)) * 1000
+        result_item = [timeStamp, nums]
+        result_send.append(result_item)
+    return result_send
 
 
 def getTodayIntervalTouristNums(scenicid_=1):

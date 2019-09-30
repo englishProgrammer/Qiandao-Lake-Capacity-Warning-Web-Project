@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf.urls import url
 from capacityWeb import views as capViews
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # capacityWEB's TEMPLATE URL
