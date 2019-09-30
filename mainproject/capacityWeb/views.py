@@ -201,11 +201,11 @@ def getTouristNums():
     # 本周星期一，星期天
     monday, sunday = get_current_week()
     query_time_monday, query_time_sunday = str(monday)[:10], str(sunday)[:10]
-    query_time_monday, query_time_sunday = '2019-09-15', '2019-09-23'
+    query_time_monday, query_time_sunday = '2019-09-22', '2019-09-30'
     # 去年同日期
     monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
     query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:10], str(sunday_lastyear)[:10]
-    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-15', '2018-09-23'
+    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-22', '2018-09-30'
     with connection.cursor() as cursor:
         # 查询本周游客人数
         query = "SELECT SUM(nums) as rn_sum_week FROM recordnums WHERE createAt > %s AND createAt < %s"
@@ -280,11 +280,11 @@ def getWarnNums():
     # 本周星期一，星期天
     monday, sunday = get_current_week()
     query_time_monday, query_time_sunday = str(monday)[:10], str(sunday)[:10]
-    query_time_monday, query_time_sunday = '2019-09-15', '2019-09-23'
+    query_time_monday, query_time_sunday = '2019-09-22', '2019-09-30'
     # 去年同日期
     monday_lastyear, sunday_lastyear = monday - relativedelta(years=1), sunday - relativedelta(years=1)
     query_time_monday_lastyear, query_time_sunday_lastyear = str(monday_lastyear)[:10], str(sunday_lastyear)[:10]
-    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-15', '2018-09-23'
+    query_time_monday_lastyear, query_time_sunday_lastyear = '2018-09-22', '2018-09-30'
     with connection.cursor() as cursor:
         # 查询本周游客人数
         query = "SELECT COUNT(warningId) as rw_count_week FROM recordwarnings WHERE createAt > %s AND createAt < %s"

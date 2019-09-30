@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>千岛湖旅游景区承载量预警-主页</title>
+    <title>千岛湖承载量预警平台-主页</title>
 
     <!-- StyleSheet -->
     <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖旅游景区承载量预警平台</a>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖承载量预警平台</a>
         </div>
         <div class="collapse navbar-collapse navbar-right" id="mynavbar">
             <ul class="nav navbar-nav">
@@ -274,7 +274,11 @@
 
     map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-
+    map.addControl(new BMap.MapTypeControl(
+        {
+            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
+        }
+    )); //添加跟换地图类型的控件
 
     function addOverHandler(id, name, content, marker, bounce = 1) {
         var info_window = {
