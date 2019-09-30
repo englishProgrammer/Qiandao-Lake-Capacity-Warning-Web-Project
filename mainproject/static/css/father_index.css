@@ -204,10 +204,13 @@ html, body {
 }
 
 
-
 #numsMonthRank {
     height: 42%;
     overflow-y: auto;
+}
+
+#numsMonthRank::-webkit-scrollbar {
+    display: none
 }
 
 #numsMonthRank::-webkit-scrollbar {
@@ -219,14 +222,26 @@ html, body {
     overflow-y: auto;
 }
 
+#numbar::-webkit-scrollbar {
+    display: none
+}
+
 #piedata {
     height: 32.5%;
     overflow-y: auto;
 }
 
+#piedata::-webkit-scrollbar {
+    display: none
+}
+
 #numsWeekRank {
     height: 42%;
     overflow-y: auto;
+}
+
+#numsWeekRank::-webkit-scrollbar {
+    display: none
 }
 
 #numsWeekRank::-webkit-scrollbar {
