@@ -40,6 +40,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 def get_current_week():
     monday, sunday = datetime.datetime.now(), datetime.datetime.now()
+    # monday, sunday = datetime.datetime(2019, 9, 28, 5, 25, 15), datetime.datetime(2019, 9, 28, 5, 25, 15)  # for display
     one_day = datetime.timedelta(days=1)
     while monday.weekday() != 0:
         monday -= one_day
@@ -307,6 +308,7 @@ def getScenicPlaceRank_week(scenicid_):
     :return: 获得某一个岛屿本周人数排行
     """
     current_time = datetime.datetime.now()
+
     monday, sunday = get_current_week()
     week_end = current_time + relativedelta(days=1)
     week_end_str = str(week_end)[:10]
@@ -336,6 +338,7 @@ def getScenicPlaceRank(scenicid_):
     :return: {'data':[data]},{'places':[placename]}
     """
     current_time = datetime.datetime.now()
+    # current_time = datetime.datetime(2019, 9, 28, 5, 25, 30) # for display
     month_start = current_time - relativedelta(days=current_time.day - 1)
     month_end = current_time + relativedelta(days=1)
     month_end_str = str(month_end)[:10]
@@ -691,6 +694,7 @@ def getThisMonthTouristNums(scencicid=1):
     """
 
     today = datetime.datetime.now()
+
     start = today - relativedelta(days=today.day - 1)
     result = Recordnums.objects.filter(scenicid=scencicid, day__gte=start.day, day__lte=today.day \
                                        , year__gte=start.year, year__lte=today.year, month__gte=start.month,
@@ -711,8 +715,11 @@ def getTodayIntervalTouristNums(scenicid_=1):
 
     :return: 返回当前时间到1小时前的间隔内的数据
     """
-    today_now = datetime.datetime.now()  # 改
-    today_now = today_now - relativedelta(days=today_now.day - 28)
+    # today_now = datetime.datetime.now()  # 改
+    today_now = datetime.datetime(2019, 9, 28, 5, 25, 30) # for display
+    # today_now = today_now - relativedelta(days=today_now.day - 28)
+
+
     # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
     today_start = today_now - relativedelta(minutes=60)
     today_start_str = str(today_start)[:19]
