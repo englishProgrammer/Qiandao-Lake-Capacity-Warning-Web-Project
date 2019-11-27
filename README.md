@@ -19,4 +19,7 @@
   + 增加本月份，本周人数变化折线图
   + 未修改人数统计方法，因为李博说到时候人数统计的时候是抽一些帧进行人数统计所以其实那个时候已经进行了时间间隔的划分
   + 已添加了倍数查询器，以备后用。使用minute__modEqual=5即可
-  
++ 2019-11-27
+  + 增加了后台管理页面admin.html,在static文件夹中增加font文件夹，增加了admin_index.css
+  + 在navbar中增加了相应的超链接,views中部分函数将使用的数据库从Recordnums改为了WIFI
+  + wifiinfo与camerainfo为新增表。
