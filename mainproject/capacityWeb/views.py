@@ -6,13 +6,27 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.db import connection
 from django.utils.safestring import SafeString
-from .models import Scenic, Recordnums, Recordwarnings, Camera
+from .models import Scenic, Recordnums, Recordwarnings, Camera, Wifi, Wifiinfo, Camerainfo
 from dateutil.relativedelta import relativedelta
-from django.db.models import Max, Sum
+from django.db.models import Max, Sum, Count, Avg
+import numpy as np
 
 
 def test(request):
-    result = Recordnums.objects.filter(minute__modEqual=5).values('scenicid', 'month')
+    scenicNums = 8
+    tvNums = 10
+    apcn = [
+        'CA00HS151116043'
+        , 'CA20HS140718064', 'CA20HS150826001', 'CA10HS140718003', 'CA10HS140718005', 'CA10HS140718006',
+        'CA10HS150104026', 'CA10HS150104021', 'CA00HS151116038', 'CA10HS140321101']
+    adminIds = ['10000', '10002', '10001']
+    adminName = ['张森', '李四', '王五']
+    for i in range(8):
+        for j in range(10):
+            k = np.random.randint(0, 3)
+            Camerainfo.objects.create(sciencid=str(i + 1), cameraid=str(i * 10 + j + 1), name=apcn[i], state=str(1),
+                                      adminid=adminIds[k], adminname=adminName[k], devicetype='摄像头')
+
     return render(request, 'test.html')
 
 
@@ -59,13 +73,13 @@ def getIntervalTouristNums(start, end, scenicid):
     :param end:
     :return: 获得start-end时间端内某岛的人数
     """
-    nums_this_Interval = Recordnums.objects.filter(scenicid=scenicid, year__range=[start.year, end.year],
-                                                   month__range=[start.month, end.month],
-                                                   day__range=[start.day, end.day],
-                                                   ).values("nums")
+    nums_this_Interval = Wifi.objects.filter(scenicid=scenicid, year__range=[start.year, end.year],
+                                             month__range=[start.month, end.month],
+                                             day__range=[start.day, end.day],
+                                             ).values("scenicid").annotate(sum=Count('scenicid'))
     sum_ = 0
     for r in nums_this_Interval:
-        sum_ += r['nums']
+        sum_ = r['sum']
     return sum_
 
 
@@ -716,9 +730,8 @@ def getTodayIntervalTouristNums(scenicid_=1):
     :return: 返回当前时间到1小时前的间隔内的数据
     """
     # today_now = datetime.datetime.now()  # 改
-    today_now = datetime.datetime(2019, 9, 28, 5, 25, 30) # for display
+    today_now = datetime.datetime(2019, 9, 28, 5, 25, 30)  # for display
     # today_now = today_now - relativedelta(days=today_now.day - 28)
-
 
     # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
     today_start = today_now - relativedelta(minutes=60)
@@ -738,10 +751,55 @@ def getTodayIntervalTouristNums(scenicid_=1):
     return result_send
 
 
+def getTodayIntervalTouristNums2(scenicid_=1):
+    """
+
+    :return: 返回本日内的人数数据
+    """
+    # today_now = datetime.datetime.now()  # 改
+    today_now = datetime.datetime(2019, 9, 28, 5, 25, 30)  # for display
+    # today_now = today_now - relativedelta(days=today_now.day - 28)
+
+    # 在展示demo的时候我们只展示9-28的数据。部署的时候再来具体更改
+    today_start = datetime.datetime(today_now.year, today_now.month, today_now.day, 0, 0, 0)
+    today_start_str = str(today_start)[:19]
+    today_now_str = str(today_now)[:19]
+
+    result = Recordnums.objects.filter(scenicid=scenicid_, createat__gt=today_start_str,
+                                       createat__lt=today_now_str).values(
+        'hour').annotate(all_nums=Avg('nums')).order_by('hour')
+    result_send = []
+    for r in result:
+        showTime = '{0}-{1}-{2} {3}:{4}:{5}'.format(today_now.year, today_now.month, today_now.day, r['hour'], 0, 0)
+        timeArray = time.strptime(showTime, '%Y-%m-%d %H:%M:%S')
+        timeStamp = int(time.mktime(timeArray)) * 1000
+        nums = r['all_nums']
+        result_item = [timeStamp, nums]
+        result_send.append(result_item)
+    return result_send
+
+
 def updatetodayTouristNums(request):
+    """
+
+    :param request:
+    :return: 获得一小时内的人数变换
+    """
     scenicid = request.GET['scenicid']
     scenicid = int(scenicid)
     result_send = getTodayIntervalTouristNums(scenicid)
+    return JsonResponse(result_send, safe=False)
+
+
+def updatetodayTouristNums2(request):
+    '''
+
+    :param request:
+    :return: 获得一天内的人数变换
+    '''
+    scenicid = request.GET['scenicid']
+    scenicid = int(scenicid)
+    result_send = getTodayIntervalTouristNums2(scenicid)
     return JsonResponse(result_send, safe=False)
 
 
@@ -758,10 +816,10 @@ def getTouristDistribute(scencid_):
     this_year = current_time.year
     last_year = last_time.year
 
-    query_this_year = Recordnums.objects.filter(scenicid=scencid_, year=this_year).values('month'). \
-        annotate(sum_num=Sum('nums'))
-    query_last_year = Recordnums.objects.filter(scenicid=scencid_, year=last_year).values('month'). \
-        annotate(sum_num=Sum('nums'))
+    query_this_year = Wifi.objects.filter(scenicid=scencid_, year=this_year).values('month'). \
+        annotate(sum_num=Count('month'))
+    query_last_year = Wifi.objects.filter(scenicid=scencid_, year=last_year).values('month'). \
+        annotate(sum_num=Count('month'))
 
     result_this_year = []
     result_last_year = []
@@ -783,3 +841,90 @@ def getScenicInfo(scencid_):
     result_send['scenic_lat'] = result[0]['lat']
     result_send['scenic_id'] = result[0]['scenicid']
     return result_send
+
+
+def admin(request):
+    return render(request, 'admin.html')
+
+
+recordNums = 0
+
+
+def getAdminData(request):
+    global recordNums
+    recordNums = 1  # 每次加载数据先置1
+    placeResult = Scenic.objects.all().values('scenicid', 'scenicname').order_by('scenicid')
+    cameraResult = Camerainfo.objects.all().values('sciencid', 'cameraid', 'name', 'state', 'adminname',
+                                                   'adminid', 'devicetype').order_by('sciencid', 'cameraid')
+    wifiResult = Wifiinfo.objects.all().values('tvid', 'sciencid', 'name', 'state', 'adminid', 'adminname',
+                                               'devicetype')
+    status = ("关闭", "开启", "异常")
+    rows = []
+
+    for r in wifiResult:
+        location = placeResult[int(r['sciencid']) - 1]['scenicname']
+        data = {"id": r['tvid'], "name": r['name'], "location": location, "status": status[int(r['state'])],
+                "person": r['adminname'], "personId": r['adminid'], "type": r['devicetype'], "index": recordNums,
+                }
+        recordNums += 1
+        rows.append(data)
+
+    for r in cameraResult:
+        location = placeResult[int(r['sciencid']) - 1]['scenicname']
+        data = {"id": r['cameraid'], "name": r['name'], "location": location, "status": status[int(r['state'])],
+                "person": r['adminname'], "personId": r['adminid'], "type": r['devicetype'], "index": recordNums,
+                }
+        recordNums += 1
+        rows.append(data)
+
+    dataList = {
+        "total": 2,
+        "rows": rows
+        # "rows": [{"id": 0, "name": '摄像头一', 'location': '梅峰岛', 'status': '正常', 'person': '陆继鹏', 'personId': 0},
+        #          {"id": 1, "name": '摄像头二', 'location': '梅峰岛', 'status': '正常', 'person': '陈景翔', 'personId': 1},
+        #          {"id": 4, "name": 'AC01', 'location': '梅峰岛', 'status': '正常', 'person': '陈景翔', 'personId': 1}]
+    }
+    return JsonResponse(dataList, safe=False)
+
+
+def deleteAdminData(request):
+    id = int(request.GET['id'])
+    type = int(request.GET['type'])
+    willDelete = [Camerainfo, Wifiinfo]
+    willDelete[type].objects.get(pk=id).delete()
+    noMeans = {'n': 'n'}
+    return JsonResponse(noMeans, safe=False)
+
+
+def addAdminData(request):
+    print('asd')
+    elements = request.GET['elements']
+
+    elements = elements.replace('true', '1')
+    elements = eval(elements)
+
+    dbs = [Camerainfo, Wifiinfo]
+    db_names = ['摄像头', 'WIFI']
+    scenicResult = Scenic.objects.all().values('scenicname').order_by('scenicid')
+    scenicNames = [r['scenicname'] for r in scenicResult]
+    states = ['关闭', '开启', '异常']
+
+    for e in elements:
+        type = db_names.index(e['type'])
+        sid = scenicNames.index(e['location']) + 1
+        st = states.index(e['status'])
+        try:
+            dbs[type].objects.get(pk=int(e['id'])).delete()
+        except Exception:
+            pass
+
+        if type == 0:  # 插入摄像头数据
+            dbs[type].objects.create(sciencid=int(sid), cameraid=int(e['id']), name=e['name'], state=st,
+                                     adminname=e['person'], adminid=e['personId'], devicetype='摄像头')
+        elif type == 1: # 插入WIFI数据
+            dbs[type].objects.create(sciencid=int(sid), tvid=int(e['id']), name=e['name'], state=st,
+                                     adminname=e['person'], adminid=e['personId'], devicetype='WIFI')
+
+    # 存入操作
+    noMeans = {'n': 'n'}
+    return JsonResponse(noMeans, safe=False)

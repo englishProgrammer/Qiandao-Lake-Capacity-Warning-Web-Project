@@ -1,0 +1,877 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>千岛湖承载量预警-{{ NAME }}</title>
+
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/father_index.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
+    <!-- JavaScript-->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/echarts.min.js' %}"></script>
+    <script src="{% static 'js/serial.js' %}"></script>
+    <script src="{% static 'js/pie.js' %}"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+    <style>
+        .img-logo > img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#mynavbar">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖承载量预警平台-{{ NAME }}</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-right" id="mynavbar">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-star"></i>景区详情<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url '[capacityWeb]:meifeng' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:huangshanjian' %}"><i class="fa fa-star"></i>黄山尖</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:tianchi' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yueguang' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:longsha' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>挂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
+                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid container-main">
+    <div class="col-md-3 col-sm-12" id="col1">
+        <div class="container-block col-md-12" id="numdata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numdata">
+                <div class="numdata-line title">本周人数</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
+                <div class="numdata-line data">{{ num_this_week }}<span class="unit"> 人</span></div>
+                {% if week_yearOveryear_rate > 0 %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif week_yearOveryear_rate < 0 %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ week_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周同比变化率-->
+                {% if week_weekOverweek_rate > 0 %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_weekOverweek_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif week_weekOverweek_rate < 0 %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_weekOverweek_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ week_weekOverweek_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周环比变化率-->
+
+                <div class="numdata-line title">本月人数</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
+                <div class="numdata-line data">{{ num_this_month }}<span class="unit"> 人</span></div>
+                {% if month_yearOveryear_rate > 0 %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif month_yearOveryear_rate < 0 %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ month_yearOveryear_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月同比变化率-->
+                {% if month_monthOvermonth_rate > 0 %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_monthOvermonth_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif month_monthOvermonth_rate < 0 %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_monthOvermonth_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ month_monthOvermonth_rate|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月环比变化率-->
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="nowwarning">
+
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-warning"></i> 当前预警情况</div>
+                <div class="container-tag">当前情况</div>
+            </div>
+            <div class="container-content" id="container-nowwarning">
+                {% for item in curwarn %}
+                    {% if item.type == 1 and item.level == 1 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 2 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 3 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="numsMonthRank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="container-content" id="container-numsMonthRank">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6  col-sm-12" id="col2">
+        <div class="container-block col-md-12" id="heatmap">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
+                <div class="container-tag">当前情况</div>
+            </div>
+            <div class="container-content" id="container-heatmap">
+
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="numbar">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
+                <select class="container-tag" onchange="numbar_onchange()" id="numbar_selected">
+                    <option class="container-tag" value="1" selected>一小时内</option>
+                    <option class="container-tag" value="2">一周内</option>
+                    <option class="container-tag" value="3">本月内</option>
+
+
+                </select>
+            </div>
+            <div class="container-content" id="container-numbar">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-12" id="col3">
+        <div class="container-block col-md-12" id="warndata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-warndata">
+                <div class="warndata-line title">本周预警次数</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
+                <div class="warndata-line data">{{ num_this_week_warn }}<span class="unit"> 次</span></div>
+                {% if week_yearOveryear_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif week_yearOveryear_rate_warn < 0 %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_yearOveryear_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ week_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周同比变化率-->
+                {% if week_weekOverweek_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif week_weekOverweek_rate_warn < 0 %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="week_weekOverweek_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ week_weekOverweek_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本周环比变化率-->
+                <div class="warndata-line title">本月预警次数</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
+                <div class="warndata-line data">{{ num_this_month_warn }}<span class="unit"> 次</span></div>
+                {% if month_yearOveryear_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif month_yearOveryear_rate_warn < 0 %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_yearOveryear_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ month_yearOveryear_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月同比变化率-->
+                {% if month_monthOvermonth_rate_warn > 0 %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                      class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>
+                        {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% elif month_monthOvermonth_rate_warn < 0 %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                      class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>
+                        {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i id="month_monthOvermonth_rate_warn"
+                                                      class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>
+                        {{ month_monthOvermonth_rate_warn|floatformat:2 }}<span
+                                class="unit"> %</span></div>
+                {% endif %}
+                <!--显示本月环比变化率-->
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="piedata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-pie-chart"></i>各月份游客人数分布</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="piedata-title">今年</div>
+            <div class="piedata-title">去年</div>
+            <div class="container-content" id="container-piedata1"></div>
+            <div class="container-content" id="container-piedata2"></div>
+        </div>
+        <div class="container-block col-md-12" id="numsWeekRank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+                <div class="container-tag">本周</div>
+            </div>
+            <div class="container-content" id="container-numsWeekRank">
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+{% block baiduimg %}
+    <script type="text/javascript">
+        var map = new BMap.Map("container-heatmap");
+        map.centerAndZoom(new BMap.Point({{ scenic_lng }}, {{ scenic_lat }}), 16); //创建地图
+        {# map.addEventListener("click",function (e) {#}
+        {# alert(e.point.lng + "," + e.point.lat);#}
+        {# }); //获取点击出的pos,用来确定各个景区的具体位置#}
+        map.enableScrollWheelZoom(true); //允许滚轮滑动来放大缩小地图
+
+        map.addControl(new BMap.MapTypeControl(
+            {
+                mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
+            }
+        )); //添加跟换地图类型的控件
+        var marker = new BMap.Marker(new BMap.Point({{ scenic_lng }}, {{ scenic_lat }}));
+        map.addOverlay(marker); //添加一个小红点
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE); //设置小红点的动画
+
+        $(function () {
+            getHeatMapData()
+        }); //地图一加载就初始化热力图
+
+        heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+        map.addOverlay(heatmapOverlay);     //添加热力图到地图中，此时还没有热力图数据，不会显示出热力图
+        function getHeatMapData() {
+            id = {{ scenic_id }}
+                $.get('/capacityWeb/getScenicHeartMapData/', {'_scenicid': id}, function (msg) {
+                    try {
+                        heatmapOverlay.setDataSet({data: msg, max: 100});
+                    } catch (e) {
+                        alert(e.message)
+                    } //捕获失败原因
+                }); //发送ajax请求，从数据库中取出数据并更新热力图数据，此部分为复用部分
+        }
+    </script>
+{% endblock %}
+<script type="text/javascript">
+    try {
+        var myChart = echarts.init(document.getElementById('container-numsMonthRank'));
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {type: 'line'}
+            },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
+            yAxis: {
+                type: 'category',
+                <!--设置y轴为类型轴-->
+                data:{{ place_month_rank | safe }},
+                <!--设置类型数据，在这里是各个地点。-->
+                axisTick: {
+                    inside: false,
+                    alignWithLabel: true,
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的轴线：灰色-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                }, <!--设置y上的label：黑色粗体-->
+            }, <!--设置y轴的属性-->
+            xAxis: {
+                type: 'value',
+                <!--设置x轴为value轴-->
+                show: true,
+                splitNumber: 5,
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的分割线：虚线-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的轴线：灰色虚线-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                },
+                <!--设置x轴上显示的标签：黑色粗体-->
+                axisTick: {
+                    color: '#c3c3c3',
+                },
+                <!--设置x轴上的‘突出物’：灰色对齐-->
+            },
+            grid: {
+                show: false,
+                top: '1%',
+                bottom: '1%',
+                left: '1%',
+                right: '7%',
+                <!--这里的top,bottom,left,right相当于margin-->
+                containLabel: true,
+                <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
+            },
+            series: [
+                {
+                    name: '人数',
+                    type: 'bar',
+                    data:{{ nums_month_rank }},
+                    label: {   <!--在柱状图上显示数字，有点丑不显示为好-->
+                        show: false,
+                        position: 'insideTop',
+                        rotate: 20,
+                        color: '#eee',
+                    },
+                    itemStyle: {
+                        color: '#E14E35',
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option)
+    } catch (e) {
+        alert(e.message)
+    }
+
+</script>
+<script type="text/javascript">
+    try {
+        var myChart = echarts.init(document.getElementById('container-numsWeekRank'));
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {type: 'line'}
+            },<!--当鼠标移动到柱状图的某一个bar时出现提示框-->
+            yAxis: {
+                type: 'category',
+                <!--设置y轴为类型轴-->
+                data:{{ place_week_rank | safe }},
+                <!--设置类型数据，在这里是各个地点。-->
+                axisTick: {
+                    inside: false,
+                    alignWithLabel: true,
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的“突出线”：向外显示，对齐label，灰色-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                    },
+                },<!--设置y轴的轴线：灰色-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                }, <!--设置y上的label：黑色粗体-->
+            }, <!--设置y轴的属性-->
+            xAxis: {
+                type: 'value',
+                <!--设置x轴为value轴-->
+                boundaryGap: true,
+                show: true,
+                splitNumber: 5,
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的分割线：虚线-->
+                axisLine: {
+                    lineStyle: {
+                        color: '#c3c3c3',
+                        type: 'dotted',
+                    },
+                },
+                <!--设置x轴的轴线：灰色虚线-->
+                axisLabel: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                },
+                <!--设置x轴上显示的标签：黑色粗体-->
+                axisTick: {
+                    color: '#c3c3c3',
+                },
+                <!--设置x轴上的‘突出物’：灰色对齐-->
+            },
+            grid: {
+                show: false,
+                top: '1%',
+                bottom: '1%',
+                left: '1%',
+                right: '7%',
+                <!--这里的top,bottom,left,right相当于margin-->
+                containLabel: true,
+                <!--这句话很重要，表示不管标签多大我们都需要自适应的将其显示出来-->
+            },
+            series: [
+                {
+                    name: '人数',
+                    type: 'bar',
+                    data:{{ nums_week_rank }},
+                    label: {   <!--在柱状图上显示数字，有点丑不显示为好-->
+                        show: false,
+                        position: 'insideTop',
+                        rotate: 20,
+                        color: '#eee',
+                    },
+                    itemStyle: {
+                        color: '#8099E1',
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option)
+    } catch (e) {
+        alert(e.message)
+    }
+
+</script>
+
+<script type="text/javascript">
+    try {
+        var myChart = echarts.init(document.getElementById('container-numbar'));//定义折线图显示的位置对象
+        var datas = {{ start_data }},
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                },
+                xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " "
+                                + [t_date.getHours(), t_date.getMinutes()].join(':');
+                        }
+                    },
+                },
+                yAxis: {
+                    type: 'value',
+                    boundaryGap: [0, '100%'],
+                    splitLine: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        fontWeight: 'bold',
+                    },
+                    splitArea: {
+                        show: false,
+                    },
+
+                },
+                grid: {
+                    bottom: '8%',
+                    top: '5%',
+                    right: '5%',
+                },
+                series: [{
+                    name: '游客人数',
+                    type: 'line',
+                    showSymbol: false,
+                    hoverAnimation: false,
+                    data: datas
+                }]
+            };
+        myChart.setOption(option);
+
+        function oneHourLine() {
+            clearInterval(iUpdate);
+            updateOneHour();
+
+            iUpdate = setInterval(updateOneHour, 60000)
+        }
+
+        function weekLine() {
+            clearInterval(iUpdate);
+
+            updateWeek();
+
+        }
+
+        function monthLine() {
+            clearInterval(iUpdate);
+
+            updateMonth();
+
+        }
+
+
+        function numbar_onchange() {
+            var myselect = document.getElementById("numbar_selected");
+            var index = myselect.selectedIndex;
+            var v = myselect.options[index].value;
+            if (v == "1") {
+                oneHourLine();
+            } else if (v == "2") {
+                weekLine();
+            } else {
+                monthLine();
+            }
+        }
+
+        function updateOneHour() {
+            var id = {{ scenic_id }}
+                $.get('/capacityWeb/updatetodayTouristNums/', {'scenicid': id}, function (msg) {
+                    datas.length = 0;
+                    datas = msg;
+                    myChart.setOption({
+                        xAxis: {
+                            type: 'time',
+                            splitLine: {
+                                show: true
+                            },
+                            splitArea: {
+                                show: true,
+                            },
+                            axisLabel: {
+                                interale: 0,
+                                rotate: 0,
+                                margin: 8,
+                                fontWeight: 'bold',
+                                formatter: function (value) {
+                                    var t_date = new Date(value);
+                                    return [t_date.getMonth() + 1, t_date.getDate()].join('-') + " "
+                                        + [t_date.getHours(), t_date.getMinutes()].join(':');
+                                }
+                            },
+                        },
+                        series: [{
+                            data: datas,
+                            showSymbol: false,
+                            hoverAnimation: false,
+                        }]
+                    })
+                })
+        }
+
+        function updateWeek() {
+            myChart.setOption({
+                xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-');
+                        }
+                    },
+                },
+                series: [{
+                    data: {{ start_data_week }},
+                    showSymbol: true,
+                    hoverAnimation: true,
+                }]
+            })
+        }
+
+        function updateMonth() {
+            myChart.setOption({
+                xAxis: {
+                    type: 'time',
+                    splitLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        show: true,
+                    },
+                    axisLabel: {
+                        interale: 0,
+                        rotate: 0,
+                        margin: 8,
+                        fontWeight: 'bold',
+                        formatter: function (value) {
+                            var t_date = new Date(value);
+                            return [t_date.getMonth() + 1, t_date.getDate()].join('-')
+                                ;
+                        }
+                    },
+                },
+                series: [{
+                    data: {{ start_data_month }},
+                    showSymbol: true,
+                    hoverAnimation: true,
+                }]
+            })
+        }
+
+        var iUpdate = setInterval(updateOneHour, 60000)
+    } catch (e) {
+        alert(e.message)
+    }
+
+</script>
+<script type="text/javascript">
+    try {
+        myChart2 = echarts.init(document.getElementById('container-piedata1'));
+        option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
+                confine: true,
+            },
+
+            calculable: true,
+            series: [
+                {
+                    name: '游客人数',
+                    type: 'pie',
+                    radius: [0, 60],
+                    center: ['50%', '40%'],
+
+                    label: {
+                        normal: {
+                            show: false
+                        },
+                        emphasis: {
+                            show: false
+                        }
+                    },
+
+                    data: {{ distribute_thisYear | safe }}
+                },
+            ]
+        };
+        myChart2.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart2.resize();
+        })
+    } catch (e) {
+        alert(e.message)
+    }
+</script>
+
+<script>
+    try {
+        myChart3 = echarts.init(document.getElementById('container-piedata2'));
+        option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}月份 : {c} ({d}%)",
+                confine: true,
+            },
+            series: [
+                {
+                    name: '游客人数',
+                    type: 'pie',
+                    radius: [0, 60],
+                    center: ['50%', '40%'],
+
+                    label: {
+                        normal: {
+                            show: false,
+                        },
+                        emphasis: {
+                            show: false,
+                        },
+                    },
+                    data: {{ distribute_lastYear | safe }}
+
+                }
+            ]
+        };
+        myChart3.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart3.resize();
+        })
+    } catch (e) {
+        alert(e.message)
+    }
+</script>
+

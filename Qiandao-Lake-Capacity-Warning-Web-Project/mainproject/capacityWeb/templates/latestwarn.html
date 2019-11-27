@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>最新预警信息</title>
+
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/latestwarn.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
+    <!-- JavaScript-->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#mynavbar">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}">千岛湖承载量预警平台</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-right" id="mynavbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-star"></i>景区详情<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'capacityWeb:meifeng' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'capacityWeb:huangshanjian' %}"><i class="fa fa-star"></i>黄山尖</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:tianchi' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yueguang' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:longsha' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>挂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
+                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid container-main">
+
+</div>
+<script>
+    $('li').click(function () {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+    })
+</script>
+</body>
+</html>

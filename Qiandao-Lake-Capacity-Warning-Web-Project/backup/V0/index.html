@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta name="author" content="HDU">
+    <title>千岛湖旅游景区承载预警平台</title>
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="{% static 'css/indexV0.css' %}">
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar-menu.css' %}">
+    <!-- JavaScript-->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/sidebar-menu.js' %}"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="img-logo"><img src="{% static 'img/logo.jpg' %}" alt="logo"></div>
+    <div class="header-title">千岛湖旅游景区承载量预警平台</div>
+    <div id="current-time">{{ current_time }}</div>
+</div>
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="indexV0.html">
+                    <i class="fa fa-home"></i><span>主页</span>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-dashboard"></i> <span>景区详情</span> <i class="fa fa-angle-right pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 仪表盘 v1</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 仪表盘 v2</a></li>
+                </ul>
+            </li>
+            {#            <li>#}
+            {#                <a href="#">#}
+            {#                    <i class="fa fa-th"></i> <span>窗口小部件</span>#}
+            {#                    <small class="label pull-right label-info">新的</small>#}
+            {#                </a>#}
+            {#            </li>#}
+            <li>
+                <a href="#">
+                    <i class="fa fa-envelope"></i> <span>最新预警</span>
+                    <small class="label pull-right label-warning">12</small>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-video-camera"></i>
+                    <span>监控</span>
+                    <i class="fa fa-angle-right pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 一般</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> Icons图标</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 按钮</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 滑块</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 时间表</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 模态框</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-calendar"></i> <span>预警日历</span>
+                    <small class="label pull-right label-danger"></small>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-pie-chart"></i>
+                    <span>预警情况</span>
+                    <i class="fa fa-angle-right pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#"><i class="fa fa-circle-o"></i> ChartJS</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> Morris</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> Flot</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> Inline charts</a></li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-folder"></i> <span>后台管理</span>
+                    <i class="fa fa-angle-right pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 清单</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 简况</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 登录</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 注册</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 锁频</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 404 错误</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 500 错误</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 空白页面</a></li>
+                    <li><a href="#"><i class="fa fa-circle-o"></i> 自适应页面</a></li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>
+<div class="container-main">
+    <div class="container-block" id="heatmap">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-map-marker"></i> 景区热力图</div>
+            {#            <div class="container-tag">当前情况</div>#}
+        </div>
+        <div class="container-content" id="container-heatmap">
+
+        </div>
+    </div>
+    <div class="container-block" id="current-warning">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-exclamation-triangle"></i> 当前预警情况</div>
+            {#            <div class="container-tag">当前情况</div>#}
+        </div>
+        <div class="container-content">
+            <div class="warning-block" id="warning1">
+                <div class="content-title">I级预警</div>
+                <div class="content-scenic">梅峰岛</div>
+                <div class="content-scenic">黄山尖</div>
+            </div>
+            <div class="warning-block" id="warning2">
+                <div class="content-title">II级预警</div>
+                <div class="content-scenic">天池岛</div>
+                <div class="content-scenic">月光尖</div>
+            </div>
+            <div class="warning-block" id="warning3">
+                <div class="content-title">III级预警</div>
+                <div class="content-scenic">龙山岛</div>
+                <div class="content-scenic">桂花岛</div>
+                <div class="content-scenic">蜜山岛</div>
+            </div>
+        </div>
+    </div>
+    <div class="container-block" id="rank-list">
+        <div class="container-header">
+            <div class="container-title"><i class="fa fa-map-marker"></i> 人数排行榜</div>
+            {#            <div class="container-tag">当前情况</div>#}
+        </div>
+        <div class="container-content">
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    // 导航栏
+    $.sidebarMenu($('.sidebar-menu'));
+    // 百度地图API功能
+    var map = new BMap.Map("container-heatmap");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(119.018693, 29.600992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    //添加地图类型控件
+    map.addControl(new BMap.MapTypeControl({
+        mapTypes: [
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]
+    }));
+    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    function addMarker(point) {
+        var marker = new BMap.Marker(point);
+        map.addOverlay(marker);
+    }
+
+    // 坐标点
+    $.ajax({
+        url: '/getHeatMapPoints/',
+        type: 'POST',
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+        async: true,
+        success: function (arg) {
+            // 若调用成功，向地图添加标记
+            var obj = jQuery.parseJSON(arg)[0];
+            scenic_points_obj = obj['scenic_data'];
+            for (var i = 0; i < scenic_points_obj.length; i++) {
+                var point = new BMap.Point(scenic_points_obj[i].fields.lgn, scenic_points_obj[i].fields.lat
+                    )
+                ;
+                addMarker(point);
+            }
+            cam_points_obj = obj['rn_data'];
+            var points = [];
+            for (i = 0; i < cam_points_obj.length; i++) {
+                points.push({
+                    'lng': cam_points_obj[i].camLgn,
+                    'lat': cam_points_obj[i].camLat,
+                    'count': cam_points_obj[i].all_nums
+                })
+            }
+            heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+            map.addOverlay(heatmapOverlay);
+            heatmapOverlay.setDataSet({data: points, max: 100});
+            heatmapOverlay.show();
+        }
+    });
+</script>
+</body>
+</html>

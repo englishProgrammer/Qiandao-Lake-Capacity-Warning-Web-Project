@@ -1,0 +1,985 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>千岛湖承载量预警平台-主页</title>
+
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel='stylesheet' href="{% static 'css/Bmap.selfdef.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/icon.ico' %}" type="image/x-icon">
+    <!-- JavaScript-->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/amcharts.js' %}"></script>
+    <script src="{% static 'js/serial.js' %}"></script>
+    <script src="{% static 'js/pie.js' %}"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=Ly8Gn95HHcLkzjkIkPUQoKAr9aqYmbwG"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#mynavbar">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><img src="{% static 'img/logo.jpg' %}" alt="">千岛湖承载量预警平台</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-right" id="mynavbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{% url '[capacityWeb]:index' %}"><i class="fa fa-home"></i>主页</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="false"><i
+                            class="fa fa-star"></i>景区详情<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'capacityWeb:meifeng' %}"><i class="fa fa-star"></i>梅峰岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'capacityWeb:huangshanjian' %}"><i class="fa fa-star"></i>黄山尖</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:tianchi' %}"><i class="fa fa-star"></i>天池岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yueguang' %}"><i class="fa fa-star"></i>月光岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:longsha' %}"><i class="fa fa-star"></i>龙山岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:yule' %}"><i class="fa fa-star"></i>渔乐岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:guihua' %}"><i class="fa fa-star"></i>挂花岛</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url '[capacityWeb]:mishan' %}"><i class="fa fa-star"></i>蜜山岛</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-exclamation-triangle"></i>最新预警</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-camera"></i>监控<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><i class="fa fa-camera"></i>监控1</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控2</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-camera"></i>监控3</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="fa fa-history"></i>历史预警</a></li>
+                <li><a href="#"><i class="fa fa-folder"></i>后台管理</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid container-main">
+    <div class="col-md-3 col-sm-12" id="col1">
+        <div class="container-block col-md-12" id="numdata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-users"></i> 游客人数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numdata">
+                <div class="numdata-line title">本周人数</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
+                <div class="numdata-line data">{{ rn_sum_week }}<span class="unit"> 人</span></div>
+                {% if rn_sum_week_yoy > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_week_yoy < 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>{{ rn_sum_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rn_sum_week_wow > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_week_wow < 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>{{ rn_sum_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                <div class="numdata-line title">本月人数</div>
+                <div class="numdata-line title">同比变化率</div>
+                <div class="numdata-line title">环比变化率</div>
+                <div class="numdata-line data">{{ rn_sum_month }}<span class="unit"> 人</span></div>
+                {% if rn_sum_month_yoy > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_month_yoy < 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>{{ rn_sum_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rn_sum_month_mom > 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-up"
+                                                      aria-hidden="true"
+                                                      style="color: red"></i>{{ rn_sum_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rn_sum_month_mom < 0 %}
+                    <div class="numdata-line data"><i class="fa fa-arrow-down"
+                                                      aria-hidden="true"
+                                                      style="color: green"></i>{{ rn_sum_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="numdata-line data"><i class="fa fa-minus"
+                                                      aria-hidden="true"
+                                                      style="color: orange"></i>{{ rn_sum_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="scenicrank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 景区人数排行</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="container-content" id="container-scenicrank">
+
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="warnrank">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-list-ul"></i> 预警次数排行</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="container-content" id="container-warnrank">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6  col-sm-12" id="col2">
+        <div class="container-block col-md-12" id="heatmap-tourist">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-map-marker"></i> 游客人数热力图</div>
+                <div class="container-tag">模式一 ： 游客人数</div>
+            </div>
+            <div class="container-content" id="container-heatmap-tour">
+
+            </div>
+            <button onclick="fullscreen_click(this)" id="heatmap-tourist-full"><img
+                    src="{% static 'img/fullscreen.svg' %}"
+                    alt="fullscreen"></button>
+            <div class="modal fade" id="modal-vid">
+                <div class="modal-dialog" style="width:60%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">监控视频</h4>
+                        </div>
+                        <div class="modal-body">
+                            <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="heatmap-capacity">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-map-marker"></i> 承载力预警热力图</div>
+                <div class="container-tag">模式二 ： 景区承载力</div>
+
+            </div>
+            <div class="container-content" id="container-heatmap-cap">
+
+            </div>
+            <button onclick="fullscreen_click(this)" id="heatmap-capacity-full"><img
+                    src="{% static 'img/fullscreen.svg' %}"
+                    alt="fullscreen"></button>
+            <div class="modal fade" id="modal-vid2">
+                <div class="modal-dialog" style="width:60%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">监控视频</h4>
+                        </div>
+                        <div class="modal-body">
+                            <video src="" height="500px" controls preload="metadata" autoplay="autoplay"></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="numbar">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-bar-chart-o"></i> 人数变化</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-numbar">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-12" id="col3">
+        <div class="container-block col-md-12" id="warndata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-exclamation"></i> 预警次数</div>
+                <div class="container-tag">历史数据</div>
+            </div>
+            <div class="container-content" id="container-warndata">
+                <div class="warndata-line title">本周预警次数</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
+                <div class="warndata-line data">{{ rw_count_week }}<span class="unit"> 次</span></div>
+                {% if rw_count_week_yoy > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_week_yoy < 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
+                                                       aria-hidden="true"
+                                                       style="color: orange"></i>{{ rw_count_week_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rw_count_week_wow > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_week_wow < 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
+                                                       aria-hidden="true"
+                                                       style="color: orange"></i>{{ rw_count_week_wow|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                <div class="warndata-line title">本月预警次数</div>
+                <div class="warndata-line title">同比变化率</div>
+                <div class="warndata-line title">环比变化率</div>
+                <div class="warndata-line data">{{ rw_count_month }}<span class="unit"> 次</span></div>
+                {% if rw_count_month_yoy > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_month_yoy < 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
+                                                       aria-hidden="true"
+                                                       style="color: orange"></i>{{ rw_count_month_yoy|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+                {% if rw_count_month_mom > 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-up"
+                                                       aria-hidden="true"
+                                                       style="color: red"></i>{{ rw_count_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% elif rw_count_month_mom < 0 %}
+                    <div class="warndata-line data"><i class="fa fa-arrow-down"
+                                                       aria-hidden="true"
+                                                       style="color: green"></i>{{ rw_count_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% else %}
+                    <div class="warndata-line data"><i class="fa fa-minus"
+                                                       aria-hidden="true"
+                                                       style="color: orange"></i>{{ rw_count_month_mom|floatformat:2 }}<span
+                            class="unit"> %</span></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container-block col-md-12" id="piedata">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-pie-chart"></i> 游客人数与预警分布</div>
+                <div class="container-tag">本月</div>
+            </div>
+            <div class="piedata-title">游客人数</div>
+            <div class="piedata-title">景区预警</div>
+            <div class="container-content" id="container-piedata1"></div>
+            <div class="container-content" id="container-piedata2"></div>
+        </div>
+        <div class="container-block col-md-12" id="current-warning">
+            <div class="container-header">
+                <div class="container-title"><i class="fa fa-warning"></i> 最新预警</div>
+                <div class="container-tag">当前情况</div>
+            </div>
+            <div class="container-content" id="container-warning">
+                {% for item in curwarn %}
+                    {% if item.type == 1 and item.level == 1 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: rgba(255,19,0,0.7)">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 2 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: rgba(255,163,0,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% elif item.type == 1 and item.level == 3 %}
+                        <div class="content-curwarn col-md-12"
+                             style="background-color: rgba(83,171,255,0.7);">{{ item.scenicName }}-{{ item.level }}级承载量预警
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="{% static 'js/baidu-map-flashMarker.js' %}"></script>
+<script type="text/javascript">
+    // 百度地图API功能，游客人数热力图
+    var map_tour = new BMap.Map("container-heatmap-tour", {enableMapClick: false});    // 创建Map实例
+    var zoom_tour_num = 12;
+    var marker_tour_array = [];
+    var camera_tour_array = [];
+    map_tour.centerAndZoom(new BMap.Point(119.028693, 29.575992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    map_tour.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
+    map_tour.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    // 清除所有标注物
+    function clearAllMarkers(map, marker_array) {
+        var i;
+        for (i = 0; i < marker_array.length; i++) {
+            map.removeOverlay(marker_array[i]);
+        }
+        marker_array.length = 0;
+    }
+
+    function addOverHandler_tour(id, name, content, marker, bounce = 1) {
+        var info_window_tour = {
+            width: 200,     // 信息窗口宽度
+            height: 60,     // 信息窗口高度
+            title: name, // 信息窗口标题
+            enableMessage: true //设置允许信息窗发送短息
+        };
+        if (bounce) {
+            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
+        }
+        marker.addEventListener("mouseover", function (e) {
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow_tour = new BMap.InfoWindow(content, info_window_tour);  // 创建信息窗口对象
+                map_tour.openInfoWindow(infoWindow_tour, point); //开启信息窗口
+            }
+        );
+        marker.addEventListener("mouseout", function (e) {
+                map_tour.closeInfoWindow(); //关闭信息窗口
+            }
+        );
+        marker.addEventListener("click", function (e) {
+                if (id == 1)
+                    window.location.href = "{% url '[capacityWeb]:meifeng' %}";
+                else if (id == 2)
+                    window.location.href = "{% url '[capacityWeb]:huangshanjian' %}";
+                else if (id == 3)
+                    window.location.href = "{% url '[capacityWeb]:tianchi' %}";
+                else if (id == 4)
+                    window.location.href = "{% url '[capacityWeb]:yueguang' %}";
+                else if (id == 5)
+                    window.location.href = "{% url '[capacityWeb]:longsha' %}";
+                else if (id == 6)
+                    window.location.href = "{% url '[capacityWeb]:yule' %}";
+                else if (id == 7)
+                    window.location.href = "{% url '[capacityWeb]:guihua' %}";
+                else if (id == 8)
+                    window.location.href = "{% url '[capacityWeb]:mishan' %}";
+            }
+        );
+    }
+
+    // 加载热力图
+    function heatmap_nums() {
+        // 清除所有摄像头分布
+        clearAllMarkers(map_tour, camera_tour_array);
+        // 坐标点
+        $.ajax({
+            url: '/getHeatMapNums/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var obj_tour = jQuery.parseJSON(arg)[0];
+                // 各摄像头的统计对象
+                cam_points_obj = obj_tour['rn_data'];
+                // 景区标注对象
+                scenic_points_obj = obj_tour['scenic_data'];
+                var points = [];
+                var scenicnums = [];
+                // 初始化景区人数之和
+                for (i = 0; i < scenic_points_obj.length; i++) {
+                    scenicnums[i] = 0;
+                }
+                // 统计各摄像头信息
+                for (i = 0; i < cam_points_obj.length; i++) {
+                    points.push({
+                        'lng': cam_points_obj[i].camLng,
+                        'lat': cam_points_obj[i].camLat,
+                        'count': cam_points_obj[i].all_nums
+                    });
+                    scenicnums[cam_points_obj[i].scenicId - 1] += cam_points_obj[i].all_nums;
+                }
+                // 添加标注物
+                for (var i = 0; i < scenic_points_obj.length; i++) {
+                    var point = new BMap.Point(scenic_points_obj[i].fields.lng, scenic_points_obj[i].fields.lat); // 坐标点
+                    var marker = new BMap.Marker(point); // 标注物
+                    map_tour.addOverlay(marker);
+                    marker_tour_array.push(marker);
+                    addOverHandler_tour(i + 1, scenic_points_obj[i].fields.scenicname, '当前景区人数：' + scenicnums[i], marker);
+                }
+                heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+                map_tour.addOverlay(heatmapOverlay);
+                heatmapOverlay.setDataSet({data: points, max: 1000});
+                heatmapOverlay.show();
+            }
+        });
+    }
+
+    // 加载摄像头分布
+    function heatmap_get_tour_camera() {
+        clearAllMarkers(map_tour, marker_tour_array);
+        $.ajax({
+            url: '/getHeatMapCamera/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var camera_obj = jQuery.parseJSON(arg)[0]['camera_data'];
+                var icon = new BMap.Icon('{% static 'img/camera.svg' %}', new BMap.Size(20, 32),
+                    {
+                        'anchor': new BMap.Size(10, 20)
+                    });
+                // 统计各摄像头信息
+                for (i = 0; i < camera_obj.length; i++) {
+                    var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c1.mp4';
+                    if (camera_obj[i].scenicId == 1 && camera_obj[i].camId == 2) {
+                        vid_name = 'vid_s1_c2.mp4';
+                    }
+                    var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
+                    //自定义参数id
+                    marker.vid_name = vid_name;
+                    marker.cam_name = cam_name;
+                    // 添加事件
+                    marker.addEventListener("click", function (e) {
+                        $("#modal-vid").modal({
+                            backdrop: true, // 相当于data-backdrop
+                            keyboard: false, // 相当于data-keyboard
+                            show: true, // 相当于data-show
+                            remote: "" // 相当于a标签作为触发器的href
+                        });
+                        var modal = $("#modal-vid").modal();
+                        modal.find('.modal-title').text(e.target.cam_name);
+                        modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
+                    });
+                    map_tour.addOverlay(marker);
+                    camera_tour_array.push(marker);
+                }
+            }
+        });
+    }
+
+    // 层级缩放事件
+    map_tour.addEventListener("zoomend", function () {
+        var zoom_num_now = map_tour.getZoom();
+        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图
+        if (zoom_tour_num < 18 && zoom_num_now >= 18) {
+            heatmap_get_tour_camera();
+        }
+        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头
+        else if (zoom_tour_num >= 18 && zoom_num_now < 18) {
+            heatmap_nums();
+        }
+        zoom_tour_num = zoom_num_now
+    });
+    // 加载事件，首次加载，默认执行
+    map_tour.addEventListener("addtilelayer", function () {
+        heatmap_nums();
+    });
+</script>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("container-heatmap-cap", {enableMapClick: false});    // 创建Map实例
+    var zoom_scenic_num = 12;
+    var marker_scenic_array = [];
+    var camera_scenic_array = [];
+    map.centerAndZoom(new BMap.Point(119.028693, 29.572992), 12);  // 初始化地图,设置中心点坐标和地图级别
+    map.setCurrentCity("杭州");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    function addOverHandler_cap(id, name, content, marker, bounce = 1) {
+        var info_window = {
+            width: 200,     // 信息窗口宽度
+            height: 60,     // 信息窗口高度
+            title: name, // 信息窗口标题
+            enableMessage: true//设置允许信息窗发送短息
+        };
+        if (bounce) {
+            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 标注跳动
+        }
+        marker.addEventListener("mouseover", function (e) {
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content, info_window);  // 创建信息窗口对象
+                map.openInfoWindow(infoWindow, point); //开启信息窗口
+            }
+        );
+        marker.addEventListener("mouseout", function (e) {
+                map.closeInfoWindow(); //关闭信息窗口
+            }
+        );
+        marker.addEventListener("click", function (e) {
+                if (id == 1)
+                    window.location.href = "{% url '[capacityWeb]:meifeng' %}";
+                else if (id == 2)
+                    window.location.href = "{% url '[capacityWeb]:huangshanjian' %}";
+                else if (id == 3)
+                    window.location.href = "{% url '[capacityWeb]:tianchi' %}";
+                else if (id == 4)
+                    window.location.href = "{% url '[capacityWeb]:yueguang' %}";
+                else if (id == 5)
+                    window.location.href = "{% url '[capacityWeb]:longsha' %}";
+                else if (id == 6)
+                    window.location.href = "{% url '[capacityWeb]:yule' %}";
+                else if (id == 7)
+                    window.location.href = "{% url '[capacityWeb]:guihua' %}";
+                else if (id == 8)
+                    window.location.href = "{% url '[capacityWeb]:mishan' %}";
+            }
+        );
+    }
+
+    function heatmap_scenic() {
+        // 清除所有摄像头分布
+        clearAllMarkers(map, camera_scenic_array);
+        $.ajax({
+            url: '/getHeatMapScenic/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var obj_cap = jQuery.parseJSON(arg)[0];
+                rn_obj = obj_cap['rn_data'];
+                var citys = [];
+                for (var i = 0; i < rn_obj.length; i++) {
+                    city = {};
+                    city['name'] = rn_obj[i].scenicName; // 景区名
+                    city['lnglat'] = [rn_obj[i].lng, rn_obj[i].lat]; // 坐标点
+                    city['type'] = 'circle';
+                    var point = new BMap.Point(rn_obj[i].lng, rn_obj[i].lat);
+                    var icon = new BMap.Icon('{% static "img/circle.svg" %}', new BMap.Size(25, 25));
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var nums = rn_obj[i].nums;
+                    var warning1 = rn_obj[i].warning1Nums;
+                    var warning2 = rn_obj[i].warning2Nums;
+                    var warning3 = rn_obj[i].warning3Nums;
+                    if (nums < warning3) {
+                        city['color'] = '#53abff';
+                        city['speed'] = 0.2;
+                        city['status'] = '空闲';
+                    } else if (nums < warning2) {
+                        city['color'] = '#ffb700';
+                        city['speed'] = 0.2;
+                        city['status'] = '拥挤';
+                    } else if (nums < warning1) {
+                        city['color'] = '#ff7e00';
+                        city['speed'] = 0.2;
+                        city['status'] = '饱和';
+                    } else {
+                        city['color'] = '#d81e06';
+                        city['speed'] = 0.5;
+                        city['status'] = '爆满';
+                    }
+                    addOverHandler_cap(i + 1, rn_obj[i].scenicName, '当前状态：' + city['status'], marker, 0);
+                    map.addOverlay(marker);
+                    marker_scenic_array.push(marker);
+                    citys.push(city);
+                }
+                var flashMarkerLayer = new FlashMarker(map, citys);
+            }
+        });
+    }
+
+    // 加载摄像头分布
+    function heatmap_get_scenic_camera() {
+        clearAllMarkers(map, marker_scenic_array);
+        $.ajax({
+            url: '/getHeatMapCamera/',
+            type: 'POST',
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            async: true,
+            success: function (arg) {
+                // 若调用成功，向地图添加标记
+                var camera_obj = jQuery.parseJSON(arg)[0]['camera_data'];
+                var icon = new BMap.Icon('{% static 'img/camera.svg' %}', new BMap.Size(20, 32),
+                    {
+                        'anchor': new BMap.Size(10, 20)
+                    });
+                // 统计各摄像头信息
+                for (i = 0; i < camera_obj.length; i++) {
+                    var point = new BMap.Point(camera_obj[i].camLng, camera_obj[i].camLat); // 坐标点
+                    var marker = new BMap.Marker(point, {icon: icon}); // 标注物
+                    var vid_name = 'vid_s' + camera_obj[i].scenicId + '_c1.mp4';
+                    if (camera_obj[i].scenicId == 1 && camera_obj[i].camId == 2) {
+                        vid_name = 'vid_s1_c2.mp4';
+                    }
+                    var cam_name = '监控视频 - ' + camera_obj[i].camPlace;
+                    //自定义参数id
+                    marker.vid_name = vid_name;
+                    marker.cam_name = cam_name;
+                    // 添加事件
+                    marker.addEventListener("click", function (e) {
+                        $("#modal-vid2").modal({
+                            backdrop: true, // 相当于data-backdrop
+                            keyboard: false, // 相当于data-keyboard
+                            show: true, // 相当于data-show
+                            remote: "" // 相当于a标签作为触发器的href
+                        });
+                        var modal = $("#modal-vid2").modal();
+                        modal.find('.modal-title').text(e.target.cam_name);
+                        modal.find('.modal-body video').attr("src", "/static/video/" + e.target.vid_name);
+                    });
+                    map.addOverlay(marker);
+                    camera_scenic_array.push(marker);
+                }
+            }
+        });
+    }
+
+    // 层级缩放事件
+    map.addEventListener("zoomend", function () {
+        var zoom_num_now = map.getZoom();
+        // 如果之前的层级小于18，而现在的层级大于等于18，加载热力图
+        if (zoom_scenic_num < 18 && zoom_num_now >= 18) {
+            heatmap_get_scenic_camera();
+        }
+        // 如果之前的层级大于等于18，而现在的层级小于18，加载摄像头
+        else if (zoom_scenic_num >= 18 && zoom_num_now < 18) {
+            heatmap_scenic();
+        }
+        zoom_scenic_num = zoom_num_now
+    });
+    // 加载事件，首次加载，默认执行
+    map.addEventListener("addtilelayer", function () {
+        heatmap_scenic();
+    });
+</script>
+
+<script type="text/javascript">
+    var chart;
+    var chartData1 = {{ scenicrank_data }};
+
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData1;
+    chart.categoryField = "scenic";
+    chart.startDuration = 1;
+    chart.rotate = true;
+    chart.marginTop = 2;
+    chart.marginLeft = 0;
+    chart.fontSize = 14;
+
+    // AXES
+    // category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridPosition = "start";
+    categoryAxis.axisColor = "#c3c3c3";
+    categoryAxis.dashLength = 3;
+    categoryAxis.fontSize = 12;
+
+    // value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.dashLength = 3;
+    valueAxis.axisAlpha = 0.2;
+    valueAxis.position = "bottom";
+    valueAxis.minorGridEnabled = true;
+    valueAxis.minorGridAlpha = 0.08;
+    valueAxis.gridAlpha = 0.15;
+    valueAxis.fontSize = 10;
+    chart.addValueAxis(valueAxis);
+
+    // GRAPHS
+    // column graph
+    var graph1 = new AmCharts.AmGraph();
+    graph1.type = "column";
+    graph1.title = "人数";
+    graph1.valueField = "nums";
+    graph1.lineAlpha = 0;
+    graph1.fillColors = "#607fd9";
+    graph1.fillAlphas = 0.8;
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b></span>";
+    chart.addGraph(graph1);
+
+    // WRITE
+    chart.write("container-scenicrank");
+</script>
+<script type="text/javascript">
+    var chart;
+
+    var chartData2 = {{ warnrank_data }};
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData2;
+    chart.categoryField = "scenic";
+    chart.startDuration = 1;
+    chart.rotate = true;
+    chart.marginTop = 2;
+    chart.marginLeft = 0;
+    chart.fontSize = 14;
+
+    // AXES
+    // category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridPosition = "start";
+    categoryAxis.axisColor = "#c3c3c3";
+    categoryAxis.dashLength = 3;
+    categoryAxis.fontSize = 12;
+
+    // value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.dashLength = 3;
+    valueAxis.axisAlpha = 0.2;
+    valueAxis.position = "bottom";
+    valueAxis.minorGridEnabled = true;
+    valueAxis.minorGridAlpha = 0.08;
+    valueAxis.gridAlpha = 0.15;
+    valueAxis.fontSize = 10;
+    chart.addValueAxis(valueAxis);
+
+    // GRAPHS
+    // column graph
+    var graph1 = new AmCharts.AmGraph();
+    graph1.type = "column";
+    graph1.title = "预警次数";
+    graph1.valueField = "times";
+    graph1.lineAlpha = 0;
+    graph1.fillColors = "#d92202";
+    graph1.fillAlphas = 0.8;
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b></span>";
+    chart.addGraph(graph1);
+
+    // WRITE
+    chart.write("container-warnrank");
+</script>
+<script type="text/javascript">
+    var chart;
+    var chartData3 = {{ numbar_data }};
+
+
+    // SERIAL CHART
+    chart = new AmCharts.AmSerialChart();
+    chart.dataProvider = chartData3.reverse();
+    chart.categoryField = "date";
+    chart.startDuration = 1;
+
+    chart.handDrawn = true;
+    chart.handDrawnScatter = 3;
+
+    // AXES
+    // category
+    var categoryAxis = chart.categoryAxis;
+    categoryAxis.gridPosition = "start";
+
+    // value
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.axisAlpha = 0;
+    chart.addValueAxis(valueAxis);
+
+    // GRAPHS
+    // column graph
+    var graph1 = new AmCharts.AmGraph();
+    graph1.type = "column";
+    graph1.title = "今年人数";
+    graph1.lineColor = "#00d570";
+    graph1.valueField = "nums";
+    graph1.lineAlpha = 1;
+    graph1.fillAlphas = 1;
+    graph1.dashLengthField = "dashLengthColumn";
+    graph1.alphaField = "alpha";
+    graph1.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b> [[additional]]</span>";
+    chart.addGraph(graph1);
+
+    // line
+    var graph2 = new AmCharts.AmGraph();
+    graph2.type = "line";
+    graph2.title = "去年人数";
+    graph2.lineColor = "#fcd202";
+    graph2.valueField = "nums_lastyear";
+    graph2.lineThickness = 3;
+    graph2.bullet = "round";
+    graph2.bulletBorderThickness = 3;
+    graph2.bulletBorderColor = "#fcd202";
+    graph2.bulletBorderAlpha = 1;
+    graph2.bulletColor = "#ffffff";
+    graph2.dashLengthField = "dashLengthLine";
+    graph2.balloonText = "<span style='font-size:13px;'>[[title]] 在 [[category]]:<b>[[value]]</b> [[additional]]</span>";
+    chart.addGraph(graph2);
+
+    // LEGEND
+    // var legend = new AmCharts.AmLegend();
+    // legend.useGraphSettings = true;
+    // legend.position = 'top';
+    // chart.addLegend(legend);
+
+    // WRITE
+    chart.write("container-numbar");
+</script>
+<script type="text/javascript">
+    var chart;
+    var legend;
+
+    var chartData4 = {{ scenicrank_data }};
+
+    // PIE CHART
+    chart = new AmCharts.AmPieChart();
+    chart.dataProvider = chartData4;
+    chart.titleField = "scenic";
+    chart.valueField = "nums";
+    chart.outlineColor = "#FFFFFF";
+    chart.outlineAlpha = 0.8;
+    chart.outlineThickness = 2;
+    chart.labelsEnabled = false;
+    chart.pieX = '50%';
+    chart.pieY = '30%';
+    // LEGEND
+    // WRITE
+    chart.write("container-piedata1");
+</script>
+<script type="text/javascript">
+    var chart;
+    var legend;
+
+    var chartData5 = {{ warnrank_data }};
+
+    // PIE CHART
+    chart = new AmCharts.AmPieChart();
+    chart.dataProvider = chartData5;
+    chart.titleField = "scenic";
+    chart.valueField = "times";
+    chart.outlineColor = "#FFFFFF";
+    chart.outlineAlpha = 0.8;
+    chart.outlineThickness = 2;
+    chart.labelsEnabled = false;
+    chart.pieX = '50%';
+    chart.pieY = '30%';
+    // WRITE
+    chart.write("container-piedata2");
+</script>
+<script>
+    $('li').click(function () {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+    });
+    // 视频模态框
+    $('#modal-vid').on('show.bs.modal', function () {
+        var $this = $(this);
+        var $modal_dialog = $this.find('.modal-dialog');
+        $this.css('display', 'block');
+        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
+
+    });
+    $('#modal-vid').on('hidden.bs.modal', function () {
+        var video = document.getElementById('modal-vid');
+        video.pause();
+    });
+    $('#modal-vid2').on('show.bs.modal', function () {
+        var $this = $(this);
+        var $modal_dialog = $this.find('.modal-dialog');
+        $this.css('display', 'block');
+        $modal_dialog.css({'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2)});
+    });
+    $('#modal-vid2').on('hidden.bs.modal', function () {
+        var video = document.getElementById('modal-vid2');
+        video.pause();
+    });
+
+    // 进入全屏
+    function launchFullscreen(obj_id) {
+        var element = document.getElementById(obj_id.substring(0, obj_id.length - 5));
+        var button_img = document.querySelector("#" + obj_id + " > img");
+        button_img.setAttribute('src', '/static/img/exit-fullscreen.svg');
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+
+    //退出全屏
+    function exitFullscreen(obj_id) {
+        var de = document;
+        var button_img = document.querySelector("#" + obj_id + " > img");
+        button_img.setAttribute('src', '/static/img/fullscreen.svg');
+        if (de.exitFullscreen) {
+            de.exitFullscreen();
+        } else if (de.mozCancelFullScreen) {
+            de.mozCancelFullScreen();
+        } else if (de.webkitCancelFullScreen) {
+            de.webkitCancelFullScreen();
+        }
+    }
+
+    // 判断是否全屏
+    function isFullscreenForNoScroll() {
+        var explorer = window.navigator.userAgent.toLowerCase();
+        if (explorer.indexOf('chrome') > 0) {//webkit
+            return !(document.body.scrollHeight === window.screen.height && document.body.scrollWidth === window.screen.width);
+        } else {//IE 9+  fireFox
+            return window.outerHeight === window.screen.height && window.outerWidth === window.screen.width;
+        }
+    }
+
+    function fullscreen_click(obj) {
+        var flag = isFullscreenForNoScroll();
+        if (flag) {
+            launchFullscreen(obj.id);
+        } else {
+            exitFullscreen(obj.id);
+        }
+    }
+</script>
+</body>
+</html>

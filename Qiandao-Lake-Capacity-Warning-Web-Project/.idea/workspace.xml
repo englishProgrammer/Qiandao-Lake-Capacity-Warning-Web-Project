@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d286059a-07fe-4ac5-81fa-ce26c3bcce00" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/mainproject/mainproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/mainproject/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainproject/capacityWeb/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/mainproject/capacityWeb/templates/index.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,14 +16,17 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="D:\mygit3\Qiandao-Lake-Capacity-Warning-Web-Project\.idea" />
+      </set>
+    </option>
+  </component>
   <component name="ProjectConfigurationFiles">
     <option name="files">
       <list>
-        <option value="$PROJECT_DIR$/.idea/Qiandao-Lake-Capacity-Warning-Web-Project.iml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-        <option value="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" />
+        <option value="$PROJECT_DIR$/.idea/.gitignore" />
         <option value="$PROJECT_DIR$/.idea/.gitignore" />
       </list>
     </option>
@@ -31,7 +34,7 @@
   <component name="ProjectId" id="1R345Oi7e3u7Cb8Ya75kHKn4v0p" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/mainproject" />
+    <property name="last_opened_file_path" value="$USER_HOME$/fresh" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -86,6 +89,7 @@
       <option name="presentableId" value="Default" />
       <updated>1568882261302</updated>
       <workItem from="1568882272775" duration="5589000" />
+      <workItem from="1572590614353" duration="716000" />
     </task>
     <servers />
   </component>
@@ -97,7 +101,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

@@ -14,5 +14,10 @@ urlpatterns = [
     path('guihua/', views.guihua, name='guihua'),
     path('mishan/', views.mishan, name='mishan'),
     path('updatetodayTouristNums/', views.updatetodayTouristNums),
+    path('updatetodayTouristNums2/', views.updatetodayTouristNums2),
     path('getScenicHeartMapData/', views.getScenicHeartMapData),
+    path('admin/', views.admin, name='admin'),
+    path('getAdminData/', views.getAdminData),
+    path('deleteAdminData/', views.deleteAdminData),
+    path('addAdminData/', views.addAdminData)
 ]

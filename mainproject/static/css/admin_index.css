@@ -1,0 +1,397 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'SimHei', "Microsoft YaHei", monospace;
+
+
+}
+
+.navbar-default {
+    background-color: #21798d;
+    border-color: #20accb;
+    z-index: 10;
+    margin-bottom: 5px;
+}
+
+.navbar-default .navbar-brand {
+    color: #f8f8f8;
+    padding: 5px 0 0 5px;
+    font-size: 20px;
+}
+
+.navbar-nav > li > a {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 60px;
+    line-height: 60px;
+    font-size: 16px;
+}
+
+.navbar-nav > li {
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 60px;
+    font-size: 16px;
+    border-left: 2px solid white;
+}
+
+.fa {
+    margin-right: 10px;
+}
+
+.navbar-nav > li:last-child {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 60px;
+    line-height: 60px;
+    font-size: 16px;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.navbar-brand img {
+    display: inline;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #fcfcfc;
+}
+
+.navbar-default .navbar-text {
+    color: #f8f8f8;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #f8f8f8;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: #fcfcfc;
+}
+
+.navbar-default .navbar-nav > li > .dropdown-menu {
+    background-color: #21798d;
+}
+
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a {
+    color: #f8f8f8;
+}
+
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
+    color: #fcfcfc;
+    background-color: #20accb;
+}
+
+.navbar-default .navbar-nav > li > .dropdown-menu > li.divider {
+    background-color: #20accb;
+}
+
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #fcfcfc;
+    background-color: #20accb;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #fcfcfc;
+    background-color: #20accb;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    color: #fcfcfc;
+    background-color: #20accb;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: #20accb;
+}
+
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+    background-color: #20accb;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #f8f8f8;
+}
+
+.navbar-default .navbar-collapse {
+    border-color: #f8f8f8;
+}
+
+.navbar-default .navbar-form {
+    border-color: #f8f8f8;
+}
+
+.navbar-default .navbar-link {
+    color: #f8f8f8;
+}
+
+.navbar-default .navbar-link:hover {
+    color: #fcfcfc;
+}
+
+@media (max-width: 767px) {
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: #f8f8f8;
+    }
+
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #fcfcfc;
+    }
+
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #fcfcfc;
+        background-color: #20accb;
+    }
+}
+
+/* 最外层的div */
+.container-main {
+    width: 100%;
+    height: 88%;
+    padding: 0;
+}
+
+/* 一个模块的div */
+.container-block {
+    border: 2px solid #c3c3c3;
+    margin: 2px;
+    background: white;
+    z-index: 1;
+    padding: 0 5px 0 5px;
+}
+
+#col1, #col2, #col3 {
+    height: 100%;
+    padding: 5px 2px 0 2px;
+}
+
+#heatmap {
+    height: 60%;
+}
+
+#numdata {
+    height: 27%;
+}
+
+#warndata {
+    height: 27%;
+}
+
+#nowwarning {
+    height: 32.5%;
+    overflow-y: auto;
+
+}
+
+#nowwarning::-webkit-scrollbar {
+    display: none
+}
+
+
+#numsMonthRank {
+    height: 42%;
+    overflow-y: auto;
+}
+
+#numsMonthRank::-webkit-scrollbar {
+    display: none
+}
+
+#numsMonthRank::-webkit-scrollbar {
+    display: none
+}
+
+#numbar {
+    height: 42%;
+    overflow-y: auto;
+}
+
+#numbar::-webkit-scrollbar {
+    display: none
+}
+
+#piedata {
+    height: 32.5%;
+    overflow-y: auto;
+}
+
+#piedata::-webkit-scrollbar {
+    display: none
+}
+
+#numsWeekRank {
+    height: 42%;
+    overflow-y: auto;
+}
+
+#numsWeekRank::-webkit-scrollbar {
+    display: none
+}
+
+#numsWeekRank::-webkit-scrollbar {
+    display: none
+}
+
+/* 模块头的div */
+.container-header {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px dashed lightgray;
+}
+
+.container-title {
+    float: left;
+    width: 70%;
+    font-size: 15px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.container-tag {
+    text-align: center;
+    float: right;
+    width: 20%;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #2e6da4;
+    color: white;
+    margin: 10px 20px 10px 0;
+}
+
+.container-tag:hover {
+    color: white;
+}
+
+/* 模块内容的div */
+.container-content {
+    width: 100%;
+    height: 80%;
+}
+
+#heatmap > .container-content {
+    height: 90%;
+}
+
+/* .numdata */
+.numdata-line {
+    width: 100%;
+}
+
+#container-numdata {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    grid-template-rows: repeat(4, 20% 30%);
+    text-align: center;
+}
+
+#container-numdata > .title {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 25px;
+}
+
+#container-numdata > .data {
+    font-size: 18px;
+    line-height: 25px;
+}
+
+.numdata-line > .unit {
+    font-size: 18px;
+}
+
+.numdata-line > .fa {
+    margin-right: 2px;
+}
+
+/* .warndata */
+.warndata-line {
+    width: 100%;
+}
+
+#container-warndata {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    grid-template-rows: repeat(4, 20% 30%);
+    text-align: center;
+}
+
+#container-warndata > .title {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 25px;
+}
+
+#container-warndata > .data {
+    font-size: 18px;
+    line-height: 25px;
+}
+
+.warndata-line > .unit {
+    font-size: 12px;
+}
+
+.warndata-line > .fa {
+    margin-right: 2px;
+}
+
+#container-nowwarning {
+    font-weight: bold;
+}
+
+#container-numsWeekRank {
+    font-weight: bold;
+}
+
+#piedata > .container-content {
+    width: 50%;
+    float: left;
+}
+
+.content-curwarn {
+    float: left;
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 3px;
+}
+
+.piedata-title {
+    width: 50%;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    float: left;
+    font-weight: bold;
+}
+
+select, option {
+    text-align: center;
+    text-align-last: center;
+}
+
+#container-piedata1 > div:nth-child(1) {
+    margin: 0 5px;
+}
